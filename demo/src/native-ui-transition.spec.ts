@@ -7,7 +7,7 @@ import {
   setNativeUIIntegration,
 } from '@rdlabo/capacitor-native-ui/integration';
 import type { Animation } from '@ionic/core';
-import { configureNativeTransition, enableNativeUI } from '../../packages/capacitor-native-ui/src/native';
+import { configureNativeTransition, enableNativeUI } from '@rdlabo/capacitor-native-ui';
 import { iosTransitionAnimation } from '../../packages/theme-ios27/src/transition/ios.transition';
 
 const fixture = (trackProgress = false) => {

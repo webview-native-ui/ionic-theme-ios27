@@ -12,13 +12,13 @@ const sourceFiles = [
   'package-lock.json',
   'demo/package-lock.json',
   'packages/theme-ios27/package.json',
-  'packages/capacitor-native-ui/package.json',
 ];
 const originals = sourceFiles.map((file) => readFileSync(file, 'utf8'));
 try {
   const packed = Object.values(JSON.parse(
     execFileSync('npm', ['pack', '--workspaces', '--ignore-scripts', '--json', '--pack-destination', dir], { encoding: 'utf8' }),
   ));
+  packed.push(...JSON.parse(execFileSync('npm', ['pack', './node_modules/@rdlabo/capacitor-native-ui', '--ignore-scripts', '--json', '--pack-destination', dir], { encoding: 'utf8' })));
   assert.equal(packed.length, 2);
   sourceFiles.forEach((file, index) => assert.equal(readFileSync(file, 'utf8'), originals[index], `${file} changed while packing`));
   const nativeName = '@rdlabo/capacitor-native-ui';
@@ -110,9 +110,9 @@ try {
       assert(existsSync(join(dir, 'consumer.css')));
     }
   }
-  assert.equal(manifests.get(nativeName).dependencies['@webview-native-ui/engine'], '^1.0.0');
+  assert(manifests.get(nativeName).dependencies['@webview-native-ui/engine'], 'Plugin must declare its Engine dependency');
   assert.match(JSON.parse(readFileSync('node_modules/@webview-native-ui/engine/package.json', 'utf8')).version, /^1\.\d+\.\d+$/, 'Installed Engine must satisfy the compatible 1.x range');
-  assert.equal(manifests.get('@rdlabo/ionic-theme-ios27').dependencies[nativeName], manifests.get(nativeName).version);
+  assert(manifests.get('@rdlabo/ionic-theme-ios27').dependencies[nativeName], 'Theme must declare its integration dependency');
   // Verify the core entry with neither Ionic nor the Ionic utilities installed.
   assert.equal(manifests.get(nativeName).peerDependenciesMeta['@ionic/core'].optional, true);
   assert(manifests.get(nativeName).dependencies['@rdlabo/ionic-theme-utils'], 'Native UI must install its own Ionic utilities');

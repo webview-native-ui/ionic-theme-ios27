@@ -9,7 +9,7 @@ import type {
   NativeUISnapshot,
   NativeUIPlugin,
   NativeUIConnectionState,
-} from '../../packages/capacitor-native-ui/src/native/definitions';
+} from '../node_modules/@rdlabo/capacitor-native-ui/src/native/definitions';
 import type { NativeUIMockCore, TestAppElement } from './native-ui-mock';
 
 const importer = new NodePackageImporter(resolve(__dirname, '../../'));

@@ -73,7 +73,6 @@ jobs:
           else
             VERSION="${BASE_VERSION}-candidate.sha${HEAD_SHA:0:12}"
           fi
-          npm pkg set "dependencies.@rdlabo/capacitor-native-ui=$VERSION" --workspace packages/theme-ios27
           npm version "$VERSION" --workspaces --no-git-tag-version --ignore-scripts --allow-same-version
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "artifact=npm-candidate-${HEAD_SHA}" >> "$GITHUB_OUTPUT"

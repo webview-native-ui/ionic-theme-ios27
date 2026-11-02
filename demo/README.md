@@ -86,3 +86,11 @@ To compare appearances:
 The startup query applies for the runtime's lifetime. Leave `buttonDefaultFill` out
 of the query to use the chosen configuration's default shown above. For local
 exceptions and fill rules, see [Choose button appearance](https://docs.rdlabo.dev/projects/capacitor-native-ui/docs/vertical-bars#choose-button-appearance).
+
+## Plugin integration testing
+
+This demo and its browser and simulator integration tests remain in the theme repository. Plugin implementation unit tests live in [webview-native-ui/capacitor](https://github.com/webview-native-ui/capacitor). E2E harnesses that need internal instrumentation read the installed package’s shipped `src` directory; the application itself consumes public package exports.
+
+From the repository root, run `npm run test:native-candidate -- /path/to/plugin.tgz --e2e` to test an unpublished plugin in an isolated copy. Add `--simulator=UDID` for native integration suites. No sibling plugin source checkout or npm publication is required.
+
+The Angular builder keeps workspace symlink paths (`preserveSymlinks`) so the local theme and demo resolve the same installed plugin. Removing this setting can create two integration-state instances and disconnect native search and transition coordination. Candidate browser runs always start their own demo server.

@@ -9,7 +9,6 @@ on:
   workflow_run:
     workflows:
       - Lint
-      - Native UI Engine
       - E2E Screenshot Tests
       - Package Candidate
     types: [completed]
@@ -110,15 +109,13 @@ jobs:
         env:
           VERSION: ${{ steps.tag_version.outputs.version }}
         run: |
-          npm pkg set "dependencies.@rdlabo/capacitor-native-ui=$VERSION" --workspace packages/theme-ios27
           npm version "$VERSION" --workspaces --no-git-tag-version --ignore-scripts --allow-same-version
           node --input-type=module <<'JS'
           import { readFileSync, writeFileSync } from 'node:fs';
           const lock = JSON.parse(readFileSync('demo/package-lock.json', 'utf8'));
-          for (const path of ['packages/capacitor-native-ui', 'packages/theme-ios27']) {
+          for (const path of ['packages/theme-ios27']) {
             lock.packages[`../${path}`].version = process.env.VERSION;
           }
-          lock.packages['../packages/theme-ios27'].dependencies['@rdlabo/capacitor-native-ui'] = process.env.VERSION;
           writeFileSync('demo/package-lock.json', JSON.stringify(lock, null, 2) + '\n');
           JS
 
@@ -129,17 +126,13 @@ jobs:
           node --input-type=module <<'JS'
           import assert from 'node:assert/strict';
           import { readFileSync } from 'node:fs';
-          const paths = ['package.json', 'packages/capacitor-native-ui/package.json', 'packages/theme-ios27/package.json'];
+          const paths = ['package.json', 'packages/theme-ios27/package.json'];
           const packages = paths.map(path => JSON.parse(readFileSync(path, 'utf8')));
           for (const pkg of packages) assert.equal(pkg.version, process.env.TAG_VERSION, `${pkg.name}: release version mismatch`);
-          assert.equal(packages[2].dependencies[packages[1].name], process.env.TAG_VERSION, 'Native workspace dependency mismatch');
           JS
 
       - name: Build workspaces
         run: npm run build
-
-      - name: Verify native Maven dependency is published
-        run: sh scripts/verify-engine-maven.sh "$(node -p "require('./node_modules/@webview-native-ui/engine/package.json').version")"
 
       - name: Commit workspace versions
         env:
@@ -148,7 +141,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add package-lock.json demo/package-lock.json packages/*/package.json packages/capacitor-native-ui/Package.swift
+          git add package-lock.json demo/package-lock.json packages/*/package.json
           if git diff --cached --quiet; then
             echo "Workspace versions are already current."
           else
@@ -174,12 +167,10 @@ jobs:
           const tag = version.includes('-') ? 'next' : 'latest';
           const root = JSON.parse(readFileSync('package.json', 'utf8'));
           assert.equal(root.version, version, 'Root version mismatch');
-          assert.deepEqual(root.workspaces, ['packages/capacitor-native-ui', 'packages/theme-ios27']);
+          assert.deepEqual(root.workspaces, ['packages/theme-ios27']);
           for (const workspace of root.workspaces) {
             const pkg = JSON.parse(readFileSync(`${workspace}/package.json`, 'utf8'));
             assert.equal(pkg.version, version, 'Workspace version mismatch');
-            if (workspace === 'packages/capacitor-native-ui') assert.match(pkg.dependencies['@webview-native-ui/engine'], /^\^1\.\d+\.\d+$/, 'Engine dependency must allow compatible 1.x updates');
-            if (workspace === 'packages/theme-ios27') assert.equal(pkg.dependencies['@rdlabo/capacitor-native-ui'], version, 'Native dependency version mismatch');
           }
           for (const workspace of root.workspaces) {
             execFileSync('npm', ['publish', '--workspace', workspace, '--provenance', '--access', 'public',
@@ -224,7 +215,6 @@ jobs:
             const isComment = context.eventName === 'issue_comment';
             const protectedWorkflows = [
               '.github/workflows/lint.yml',
-              '.github/workflows/native-ui-engine.yml',
               '.github/workflows/e2e-pull_request.yml',
               '.github/workflows/e2e-main.yml',
               '.github/workflows/package-candidate.yml',
@@ -422,7 +412,6 @@ jobs:
               ]);
             }
 
-            if (targetBranch === 'main') required.set('Native UI Engine', '.github/workflows/native-ui-engine.yml');
             const runs = await getRequiredRuns(headSha, event, required, prNumber, targetBranch);
             const incomplete = [...required.keys()].filter((name) => {
               const run = runs.get(name);
@@ -622,13 +611,11 @@ jobs:
           import { readFileSync, readdirSync } from 'node:fs';
           import { createHash } from 'node:crypto';
           import { execFileSync, spawnSync } from 'node:child_process';
-          const engine = '@webview-native-ui/engine';
-          const native = '@rdlabo/capacitor-native-ui';
           const theme = '@rdlabo/ionic-theme-ios27';
           const { EXPECTED_NAME, EXPECTED_VERSION, DIST_TAG, RUNNER_TEMP } = process.env;
           assert([theme, '@rdlabo/ionic-theme-ios26'].includes(EXPECTED_NAME), 'Unexpected package identity');
           assert.equal(DIST_TAG, 'beta', 'Unexpected dist-tag');
-          const names = EXPECTED_NAME === theme ? [native, theme] : [EXPECTED_NAME];
+          const names = [EXPECTED_NAME];
           const directory = `${RUNNER_TEMP}/npm-candidate`;
           const files = readdirSync(directory).filter(file => file.endsWith('.tgz'));
           assert.equal(files.length, names.length, 'Unexpected number of package archives');
@@ -640,18 +627,8 @@ jobs:
             assert(names.includes(pkg.name), 'Unexpected package identity');
             assert.equal(pkg.version, EXPECTED_VERSION, 'Artifact version mismatch');
             assert(!pkg.publishConfig?.registry || ['https://registry.npmjs.org', 'https://registry.npmjs.org/'].includes(pkg.publishConfig.registry), 'Unexpected publish registry');
-            if (pkg.name === native) assert.match(pkg.dependencies?.[engine], /^\^1\.\d+\.\d+$/, 'Engine dependency must allow compatible 1.x updates');
-            if (pkg.name === theme) assert.equal(pkg.dependencies?.[native], EXPECTED_VERSION, 'Native dependency version mismatch');
             assert(!archives.has(pkg.name), 'Duplicate package identity');
             archives.set(pkg.name, archive);
-          }
-          if (EXPECTED_NAME === theme) {
-            assert.match(EXPECTED_VERSION, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
-            const pkg = JSON.parse(execFileSync('tar', ['-xOf', archives.get(native), 'package/package.json'], { encoding: 'utf8' }));
-            // Verify that the minimum supported native release exists before publishing.
-            const engineVersion = pkg.dependencies[engine].slice(1);
-            const base = `https://repo.maven.apache.org/maven2/io/github/webview-native-ui/engine/${engineVersion}/engine-${engineVersion}`;
-            for (const extension of ['pom', 'aar']) execFileSync('curl', ['--fail', '--silent', '--show-error', '--head', '--max-time', '30', `${base}.${extension}`]);
           }
           const pending = [];
           for (const name of names) {

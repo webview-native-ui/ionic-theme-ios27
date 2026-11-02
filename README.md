@@ -1,4 +1,4 @@
-# Ionic Theme and Capacitor Native UI
+# Ionic Theme for iOS 27
 
 Install from npm; see [Native UI installation](https://docs.rdlabo.dev/projects/capacitor-native-ui/docs/readme#install-from-npm) or [theme setup](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/setup). For 1.x, use the [v1.2.1 guide](https://github.com/webview-native-ui/ionic-theme-ios27/tree/ios27-v1.2.1).
 Bring the iOS look to your Ionic app, or add native controls to your Capacitor app while keeping Web content, routing, and application state.
@@ -65,10 +65,22 @@ Use standard native buttons without Ionic through the [plain HTML adapter](https
 
 The theme and `@rdlabo/capacitor-native-ui` use the MIT license. The independent [Engine repository](https://github.com/webview-native-ui/engine) owns its licensing and notices.
 
+## Repository boundaries
+
+The plugin is maintained in [webview-native-ui/capacitor](https://github.com/webview-native-ui/capacitor). This repository owns the Ionic theme, the combined demo, browser screenshots, and simulator integration tests. The demo installs `@rdlabo/capacitor-native-ui` from npm; theme releases do not publish or change the plugin version.
+
+To verify an unpublished plugin archive against the real demo, run:
+
+```sh
+npm run test:native-candidate -- /absolute/path/rdlabo-capacitor-native-ui-VERSION.tgz --e2e
+```
+
+This creates an isolated temporary checkout and leaves your manifests and lockfiles unchanged. Add `--simulator=UDID` for native UI, search, and edge simulator suites. Diagnostics and the temporary demo are retained at the printed path. Plugin-only unit and native library tests live in the capacitor repository. The plugin repository also runs this demo against its candidate archive in CI, so merge this repository’s migration before enabling that workflow.
+
 ## Maintenance
 
 Native UI and the theme share a release version. Engine is maintained and released independently at [webview-native-ui/engine](https://github.com/webview-native-ui/engine). Its npm, SwiftPM and Maven versions must stay aligned when updating the pinned dependency.
 
 Release from a clean, up-to-date `main` with `npm run release`. The command bumps the root version and creates the `ios27-v…` tag. The tag workflow updates the two workspace versions, verifies the pinned Engine Maven artifact, and publishes Native UI followed by the theme. Prereleases use the npm `next` dist-tag. See the [workflows](.github/workflows).
 
-A partially published versioned release requires a new shared version: npm versions cannot be overwritten, and this release workflow does not resume partial publication.
+Theme and plugin versions are independent. A published npm version cannot be overwritten.
