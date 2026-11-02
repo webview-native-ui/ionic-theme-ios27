@@ -44,7 +44,7 @@ The theme styles toolbars, tabs, lists, buttons, search, and overlays, with ligh
 
 ## Repository boundaries
 
-The plugin is maintained in [webview-native-ui/capacitor](https://github.com/webview-native-ui/capacitor). This repository owns the Ionic theme, the combined demo, browser screenshots, and simulator integration tests. The demo installs `@rdlabo/capacitor-native-ui` from npm; theme releases do not publish or change the plugin version.
+The plugin is maintained in [webview-native-ui/capacitor-plugin](https://github.com/webview-native-ui/capacitor-plugin). This repository owns the Ionic theme, the combined demo, browser screenshots, and simulator integration tests. The demo installs `@rdlabo/capacitor-native-ui` from npm; theme releases do not publish or change the plugin version.
 
 To verify an unpublished plugin archive against the real demo, run:
 
