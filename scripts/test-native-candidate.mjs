@@ -33,8 +33,9 @@ run('demo', 'npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund']);
 for (const cwd of ['.', 'demo']) {
   const installed = JSON.parse(readFileSync(join(directory, cwd, 'node_modules/@rdlabo/capacitor-native-ui/package.json'), 'utf8'));
   assert.deepEqual(installed, manifest, `${cwd} must install the supplied candidate archive`);
-  const expectedCore = execFileSync('tar', ['-xOf', archive, 'package/dist/core.js']);
-  assert.deepEqual(readFileSync(join(directory, cwd, 'node_modules/@rdlabo/capacitor-native-ui/dist/core.js')), expectedCore, `${cwd} must use the candidate build`);
+  const coreEntry = manifest.exports['./core'].import.replace(/^\.\//, '');
+  const expectedCore = execFileSync('tar', ['-xOf', archive, `package/${coreEntry}`]);
+  assert.deepEqual(readFileSync(join(directory, cwd, 'node_modules/@rdlabo/capacitor-native-ui', coreEntry)), expectedCore, `${cwd} must use the candidate build`);
 }
 run('demo', 'npm', ['test', '--', '--watch=false']);
 run('demo', 'npm', ['run', 'build', '--', '--configuration=production']);
