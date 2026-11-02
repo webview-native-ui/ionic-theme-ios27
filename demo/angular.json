@@ -25,7 +25,6 @@
             "index": "src/index.html",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "preserveSymlinks": true,
             "assets": [
               {
                 "glob": "**/*",

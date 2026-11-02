@@ -2936,7 +2936,7 @@ for (const theme of ['light', 'class', 'system', 'always'] as const) {
     });
     if (theme !== 'light') {
       await page.addStyleTag({
-        content: compile(resolve(__dirname, `../../packages/theme-ios27/src/styles/ionic-theme-ios27-dark-${theme}.scss`), {
+        content: compile(resolve(__dirname, `../../src/styles/ionic-theme-ios27-dark-${theme}.scss`), {
           importers: [importer],
         }).css,
       });

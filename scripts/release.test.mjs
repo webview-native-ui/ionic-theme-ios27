@@ -101,9 +101,11 @@ test('ios26 beta still publishes its single package', t => {
 
 for (const version of ['2.0.0', '2.0.0-0']) {
   test(`versioned release: publishes only the theme (${version})`, t => {
-    const { result, published } = runWorkspaceRelease(t, version);
+    const { result, published } = runPackageRelease(t, version);
     assert.equal(result.status, 0, result.stderr);
-    assert.deepEqual(published.map(call => call[call.indexOf('--workspace') + 1]), ['packages/theme-ios27']);
+    assert.equal(published.length, 1);
+    assert.equal(published[0][0], 'publish');
+    assert(!published[0].includes('--workspace'));
     for (const call of published) {
       assert(call.includes('--provenance'));
       assert(!call.includes('--ignore-scripts'), 'Versioned release must retain package lifecycle scripts');
@@ -112,18 +114,10 @@ for (const version of ['2.0.0', '2.0.0-0']) {
   });
 }
 
-function runWorkspaceRelease(t, version) {
-  const directory = mkdtempSync(join(tmpdir(), 'workspace-release-test-'));
+function runPackageRelease(t, version) {
+  const directory = mkdtempSync(join(tmpdir(), 'package-release-test-'));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
-  const workspaces = ['packages/theme-ios27'];
-  writeFileSync(join(directory, 'package.json'), JSON.stringify({ version, workspaces }));
-  for (const [index, workspace] of workspaces.entries()) {
-    mkdirSync(join(directory, workspace), { recursive: true });
-    writeFileSync(join(directory, workspace, 'package.json'), JSON.stringify({
-      name: theme, version,
-      dependencies: { [native]: '2.1.0' },
-    }));
-  }
+  writeFileSync(join(directory, 'package.json'), JSON.stringify({ name: theme, version, dependencies: { [native]: '2.1.0' } }));
   const log = join(directory, 'calls.jsonl');
   writeFileSync(join(directory, 'npm'), `#!/usr/bin/env node
 require('node:fs').appendFileSync(process.env.CALL_LOG, JSON.stringify(process.argv.slice(2)) + '\\n');

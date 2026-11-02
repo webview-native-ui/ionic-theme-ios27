@@ -17,12 +17,13 @@ printf 'Native UI verification artifacts: %s\n' "$artifacts"
 
 cd "$repo"
 npm run build
-npm pack --workspaces --ignore-scripts --json --pack-destination "$artifacts" > "$artifacts/pack.json"
+npm pack --ignore-scripts --json --pack-destination "$artifacts" > "$artifacts/pack.json"
 npm pack ./node_modules/@rdlabo/capacitor-native-ui --ignore-scripts --json --pack-destination "$artifacts" > "$artifacts/native-pack.json"
 native_archive=$(node -e 'process.stdout.write(require(process.argv[1])[0].filename)' "$artifacts/native-pack.json")
 theme_archive=$(node -e 'process.stdout.write(Object.values(require(process.argv[1])).find(p => p.name === "@rdlabo/ionic-theme-ios27").filename)' "$artifacts/pack.json")
 
 cd "$repo/demo"
+npm ci --ignore-scripts --no-audit --no-fund
 npm run build -- --configuration=production
 npx cap sync ios
 xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \

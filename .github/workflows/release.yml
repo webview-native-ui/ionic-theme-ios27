@@ -105,47 +105,32 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Update all workspace versions
+      - name: Update demo package lock
         env:
           VERSION: ${{ steps.tag_version.outputs.version }}
         run: |
-          npm version "$VERSION" --workspaces --no-git-tag-version --ignore-scripts --allow-same-version
           node --input-type=module <<'JS'
           import { readFileSync, writeFileSync } from 'node:fs';
           const lock = JSON.parse(readFileSync('demo/package-lock.json', 'utf8'));
-          for (const path of ['packages/theme-ios27']) {
-            lock.packages[`../${path}`].version = process.env.VERSION;
-          }
+          lock.packages['node_modules/@rdlabo/ionic-theme-ios27'].version = process.env.VERSION;
           writeFileSync('demo/package-lock.json', JSON.stringify(lock, null, 2) + '\n');
           JS
 
-      - name: Verify package version matches release tag
-        env:
-          TAG_VERSION: ${{ steps.tag_version.outputs.version }}
-        run: |
-          node --input-type=module <<'JS'
-          import assert from 'node:assert/strict';
-          import { readFileSync } from 'node:fs';
-          const paths = ['package.json', 'packages/theme-ios27/package.json'];
-          const packages = paths.map(path => JSON.parse(readFileSync(path, 'utf8')));
-          for (const pkg of packages) assert.equal(pkg.version, process.env.TAG_VERSION, `${pkg.name}: release version mismatch`);
-          JS
-
-      - name: Build workspaces
+      - name: Build package
         run: npm run build
 
-      - name: Commit workspace versions
+      - name: Commit demo package lock
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           VERSION: ${{ steps.tag_version.outputs.version }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add package-lock.json demo/package-lock.json packages/*/package.json
+          git add demo/package-lock.json
           if git diff --cached --quiet; then
-            echo "Workspace versions are already current."
+            echo "Demo package lock is already current."
           else
-            git commit -m "chore: update workspace versions to $VERSION"
+            git commit -m "chore: update demo package lock to $VERSION"
           fi
           git fetch origin "$DEFAULT_BRANCH"
           if [ "$(git rev-parse 'HEAD^{tree}')" = "$(git rev-parse "origin/$DEFAULT_BRANCH^{tree}")" ]; then
@@ -167,15 +152,8 @@ jobs:
           const tag = version.includes('-') ? 'next' : 'latest';
           const root = JSON.parse(readFileSync('package.json', 'utf8'));
           assert.equal(root.version, version, 'Root version mismatch');
-          assert.deepEqual(root.workspaces, ['packages/theme-ios27']);
-          for (const workspace of root.workspaces) {
-            const pkg = JSON.parse(readFileSync(`${workspace}/package.json`, 'utf8'));
-            assert.equal(pkg.version, version, 'Workspace version mismatch');
-          }
-          for (const workspace of root.workspaces) {
-            execFileSync('npm', ['publish', '--workspace', workspace, '--provenance', '--access', 'public',
-              '--tag', tag], { stdio: 'inherit' });
-          }
+          assert.equal(root.name, '@rdlabo/ionic-theme-ios27', 'Unexpected package identity');
+          execFileSync('npm', ['publish', '--provenance', '--access', 'public', '--tag', tag], { stdio: 'inherit' });
           JS
 
   authorize-candidate:

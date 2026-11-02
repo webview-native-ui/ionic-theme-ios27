@@ -38,7 +38,7 @@ npm start
 ionic serve
 ```
 
-Navigate to `http://localhost:4200/`. The application reloads when demo source changes. Rebuild the workspace packages from the repository root after changing theme or native runtime source.
+Navigate to `http://localhost:4200/`. The application reloads when demo source changes. Run `npm run build:demo` from the repository root after changing theme source; it rebuilds and reinstalls the local theme before building the demo. Use the candidate archive command below to test plugin changes.
 
 ## Building
 
@@ -93,4 +93,4 @@ This demo and its browser and simulator integration tests remain in the theme re
 
 From the repository root, run `npm run test:native-candidate -- /path/to/plugin.tgz --e2e` to test an unpublished plugin in an isolated copy. Add `--simulator=UDID` for native integration suites. No sibling plugin source checkout or npm publication is required.
 
-The Angular builder keeps workspace symlink paths (`preserveSymlinks`) so the local theme and demo resolve the same installed plugin. Removing this setting can create two integration-state instances and disconnect native search and transition coordination. Candidate browser runs always start their own demo server.
+The demo installs the local theme as a regular package (`install-links=true`) so the theme and app share the same installed plugin. Integration tests use the installed theme sources. This avoids duplicate plugin state through the root checkout’s `node_modules`. Candidate browser runs always start their own demo server.

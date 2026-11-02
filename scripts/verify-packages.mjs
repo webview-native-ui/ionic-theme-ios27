@@ -5,18 +5,17 @@ import { cpSync, mkdtempSync, rmSync, existsSync, mkdirSync, symlinkSync, readFi
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
-// Validate the archives consumers install, not the workspace symlinks.
+// Validate the archives consumers install, not the local package links.
 const dir = mkdtempSync(join(tmpdir(), 'ionic-theme-packages-'));
 const sourceFiles = [
   'package.json',
   'package-lock.json',
   'demo/package-lock.json',
-  'packages/theme-ios27/package.json',
-];
+ ];
 const originals = sourceFiles.map((file) => readFileSync(file, 'utf8'));
 try {
   const packed = Object.values(JSON.parse(
-    execFileSync('npm', ['pack', '--workspaces', '--ignore-scripts', '--json', '--pack-destination', dir], { encoding: 'utf8' }),
+    execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', dir], { encoding: 'utf8' }),
   ));
   packed.push(...JSON.parse(execFileSync('npm', ['pack', './node_modules/@rdlabo/capacitor-native-ui', '--ignore-scripts', '--json', '--pack-destination', dir], { encoding: 'utf8' })));
   assert.equal(packed.length, 2);
@@ -36,7 +35,7 @@ try {
     symlinkSync(join(dir, 'node_modules'), join(packageRoot, 'node_modules'), 'dir');
     const files = new Set(archive.files.map((file) => file.path));
 
-    // Hoisted workspace dependencies must not hide undeclared runtime imports.
+    // Locally installed dependencies must not hide undeclared runtime imports.
     const dependencies = new Set([...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.peerDependencies ?? {})]);
     for (const file of files) {
       if (!file.startsWith('dist/') || !file.endsWith('.js')) continue;
@@ -186,7 +185,7 @@ try {
     enableNativeUI({ verticalBars: { enabled: 'auto' } });
   `);
   execFileSync(process.execPath, [resolve('node_modules/typescript/bin/tsc'), '--noEmit', '--strict', '--module', 'esnext', '--moduleResolution', 'bundler', '--target', 'es2022', '--lib', 'es2022,dom', consumer], {cwd: dir, stdio: 'inherit'});
-  // Only external dependencies come from the workspace; all packages resolve from archives.
+  // Only external dependencies come from this checkout; all packages resolve from archives.
   for (const name of ['@ionic', '@stencil', '@rdlabo/ionic-theme-utils', 'ionicons', 'typescript']) {
     symlinkSync(resolve('node_modules', name), join(dir, 'node_modules', name), 'dir');
   }

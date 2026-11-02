@@ -18,7 +18,7 @@ const excluded = new Set(['.git', 'node_modules', 'dist', 'www', '.angular', '.b
 cpSync(source, directory, { recursive: true, filter: path => !excluded.has(basename(path)) });
 console.log(`Candidate ${manifest.version}; isolated demo and diagnostics: ${directory}`);
 const spec = `file:${archive}`;
-for (const [path, section] of [['package.json', 'devDependencies'], ['packages/theme-ios27/package.json', 'dependencies'], ['demo/package.json', 'dependencies']]) {
+for (const [path, section] of [['package.json', 'dependencies'], ['demo/package.json', 'dependencies']]) {
   const file = join(directory, path);
   const pkg = JSON.parse(readFileSync(file, 'utf8'));
   pkg[section]['@rdlabo/capacitor-native-ui'] = spec;
@@ -33,7 +33,8 @@ run('demo', 'npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund']);
 for (const cwd of ['.', 'demo']) {
   const installed = JSON.parse(readFileSync(join(directory, cwd, 'node_modules/@rdlabo/capacitor-native-ui/package.json'), 'utf8'));
   assert.deepEqual(installed, manifest, `${cwd} must install the supplied candidate archive`);
-  run(cwd, 'npm', ['ls', '@rdlabo/capacitor-native-ui', '--all']);
+  const expectedCore = execFileSync('tar', ['-xOf', archive, 'package/dist/core.js']);
+  assert.deepEqual(readFileSync(join(directory, cwd, 'node_modules/@rdlabo/capacitor-native-ui/dist/core.js')), expectedCore, `${cwd} must use the candidate build`);
 }
 run('demo', 'npm', ['test', '--', '--watch=false']);
 run('demo', 'npm', ['run', 'build', '--', '--configuration=production']);
