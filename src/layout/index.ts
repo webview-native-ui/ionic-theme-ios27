@@ -23,6 +23,7 @@ export const setVerticalBarsLayout = (
   app.classList.toggle('ios-theme-vertical-bars-left', edge !== null && (edge === 'leading') !== direction);
   if (edge && Number.isFinite(inset) && inset > 0) app.style.setProperty('--ios-theme-vertical-bars-native-inset', `${inset}px`);
   else app.style.removeProperty('--ios-theme-vertical-bars-native-inset');
+  // Restore only while the value still matches our write; identical application writes are indistinguishable.
   const saved = toolbarTops.get(app);
   if (saved) {
     if (app.style.getPropertyValue(toolbarTopProperty) === saved.applied && !app.style.getPropertyPriority(toolbarTopProperty)) {
