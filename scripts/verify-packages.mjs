@@ -108,6 +108,64 @@ try {
     assert.equal(typeof setVerticalBarsLayout, 'function');
     assert.equal(typeof applyFoldStateClasses, 'function');
     setVerticalBarsLayout({ edge: null });
+    const properties = new Map();
+    const classes = new Set();
+    const priorities = new Map();
+    let stylesheetTop = '';
+    const root = {
+      closest: () => null,
+      classList: { toggle: (name, enabled) => enabled ? classes.add(name) : classes.delete(name) },
+      style: {
+        setProperty: (name, value, priority = '') => { properties.set(name, value); priorities.set(name, priority); },
+        removeProperty: (name) => { properties.delete(name); priorities.delete(name); },
+        getPropertyValue: (name) => properties.get(name) ?? '',
+        getPropertyPriority: (name) => priorities.get(name) ?? '',
+      },
+      ownerDocument: { defaultView: {
+        getComputedStyle: () => ({getPropertyValue: (name) => properties.get(name) ?? (name === top ? stylesheetTop : '')}),
+        dispatchEvent: () => true,
+      } },
+    };
+    const top = '--ios-theme-vertical-bars-toolbar-top';
+    setVerticalBarsLayout({ edge: 'trailing', toolbarTop: 174 }, root);
+    assert.equal(properties.get(top), '174px');
+    setVerticalBarsLayout({ edge: 'leading', toolbarTop: 120 }, root, true);
+    assert.equal(properties.get(top), '120px');
+    assert.equal(classes.has('ios-theme-vertical-bars-left'), false);
+    for (const toolbarTop of [NaN, Infinity, -1]) {
+      setVerticalBarsLayout({ edge: 'trailing', toolbarTop }, root);
+      assert.equal(properties.has(top), false);
+    }
+    setVerticalBarsLayout({ edge: 'trailing' }, root);
+    assert.equal(properties.get(top), '170px');
+    setVerticalBarsLayout({}, root);
+    assert.equal(classes.has('ios-theme-vertical-bars'), false);
+    setVerticalBarsLayout({ edge: 'trailing', toolbarTop: 0 }, root);
+    assert.equal(properties.get(top), '0px');
+    setVerticalBarsLayout({ edge: null, toolbarTop: 174 }, root);
+    assert.equal(properties.has(top), false);
+
+    stylesheetTop = '124px';
+    setVerticalBarsLayout({ edge: 'trailing', inset: 84 }, root);
+    assert.equal(properties.has(top), false, 'legacy calls preserve stylesheet top');
+    setVerticalBarsLayout({ edge: 'trailing', toolbarTop: 174 }, root);
+    setVerticalBarsLayout({ edge: 'trailing' }, root);
+    assert.equal(properties.has(top), false, 'clearing device geometry restores stylesheet ownership');
+    root.style.setProperty(top, '210px', 'important');
+    setVerticalBarsLayout({ edge: 'trailing', toolbarTop: 174 }, root);
+    setVerticalBarsLayout({ edge: null }, root);
+    assert.equal(properties.get(top), '210px');
+    assert.equal(priorities.get(top), 'important');
+    setVerticalBarsLayout({ edge: 'trailing', toolbarTop: 174 }, root);
+    root.style.setProperty(top, '250px');
+    setVerticalBarsLayout({ edge: null }, root);
+    assert.equal(properties.get(top), '250px', 'later application writes are not removed');
+
+    root.ownerDocument.defaultView = undefined;
+    root.style.setProperty(top, '124px');
+    setVerticalBarsLayout({ edge: 'trailing' }, root);
+    assert.equal(properties.get(top), '124px', 'a document without a window preserves inline configuration');
+
     const animation = { play() {} };
     assert.equal(withNativeUITransition(() => animation)({}), animation);
     await assert.rejects(import('@capacitor/core'), { code: 'ERR_MODULE_NOT_FOUND' });

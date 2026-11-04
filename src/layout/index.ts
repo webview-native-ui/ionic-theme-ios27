@@ -1,19 +1,48 @@
 /** Web layout inputs. Device capabilities belong to the application or native plugin. */
 export interface VerticalBarsLayout {
-  edge: 'leading' | 'trailing' | null;
+  edge?: 'leading' | 'trailing' | null;
   inset?: number;
+  /** Physical toolbar origin in viewport CSS pixels. Omit to retain the established 170px default. */
+  toolbarTop?: number;
 }
+
+const toolbarTopProperty = '--ios-theme-vertical-bars-toolbar-top';
+const toolbarTops = new WeakMap<HTMLElement, { previous: string; priority: string; applied: string }>();
 
 /** Applies only Web layout. Does not enable Native UI or report native availability. */
 export const setVerticalBarsLayout = (layout: VerticalBarsLayout, root?: HTMLElement, rtl?: boolean): void => {
   const app = root ?? (typeof document === 'undefined' ? undefined : document.querySelector<HTMLElement>('ion-app'));
   if (!app) return;
-  const { edge, inset = 0 } = layout;
+  const { edge = null, inset = 0 } = layout;
   const direction = rtl ?? app.closest('[dir]')?.getAttribute('dir') === 'rtl';
   app.classList.toggle('ios-theme-vertical-bars', edge !== null);
   app.classList.toggle('ios-theme-vertical-bars-left', edge !== null && (edge === 'leading') !== direction);
   if (edge && Number.isFinite(inset) && inset > 0) app.style.setProperty('--ios-theme-vertical-bars-native-inset', `${inset}px`);
   else app.style.removeProperty('--ios-theme-vertical-bars-native-inset');
+  const saved = toolbarTops.get(app);
+  if (saved) {
+    if (app.style.getPropertyValue(toolbarTopProperty) === saved.applied && !app.style.getPropertyPriority(toolbarTopProperty)) {
+      if (saved.previous) app.style.setProperty(toolbarTopProperty, saved.previous, saved.priority);
+      else app.style.removeProperty(toolbarTopProperty);
+    }
+    toolbarTops.delete(app);
+  }
+  if (edge) {
+    // Preserve existing CSS/inline customization when the caller omits the top.
+    const configured =
+      layout.toolbarTop === undefined
+        ? (app.ownerDocument.defaultView?.getComputedStyle(app).getPropertyValue(toolbarTopProperty).trim() ??
+          app.style.getPropertyValue(toolbarTopProperty).trim())
+        : undefined;
+    const top = layout.toolbarTop ?? (configured ? undefined : 170);
+    if (top !== undefined && Number.isFinite(top) && top >= 0) {
+      const previous = app.style.getPropertyValue(toolbarTopProperty);
+      const priority = app.style.getPropertyPriority(toolbarTopProperty);
+      const applied = `${top}px`;
+      app.style.setProperty(toolbarTopProperty, applied);
+      toolbarTops.set(app, { previous, priority, applied });
+    }
+  }
   app.ownerDocument.defaultView?.dispatchEvent(new Event('nativeUIRefresh'));
 };
 
