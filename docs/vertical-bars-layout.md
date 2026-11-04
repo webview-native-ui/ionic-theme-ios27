@@ -38,7 +38,7 @@ The Web rail uses the iPhone Duo toolbar layout even without native geometry: a 
 
 `--ios-theme-vertical-bars-toolbar-top` overrides the top origin. Modal toolbar positioning continues to account for the sheet offset. When native measurements are available, they take precedence over these Web defaults.
 
-### Pass Foldable geometry to both renderers
+### Apply device layout values
 
 Resolve device metrics in the application's existing initial layout and Foldable change handler:
 
@@ -53,7 +53,7 @@ setVerticalBarsLayout(metrics);
 
 The resolver uses the SDK-free Native UI integration entry; it does not start native projection. Reuse the application's placement, posture and resize subscriptions; the resolver does not subscribe or start Native UI. If reads can overlap, discard stale results in that existing handler.
 
-The resolver accepts an object exposing `getBarPlacement()` and `getReservedRegions()`, without depending on Foldable itself. It returns logical `edge`, `inset`, `toolbarTop` and `reservedRegions`. Unsupported APIs and failed reads leave those fields undefined. The current viewport and document direction resolve the physical rail side. Region frames use viewport CSS pixels and already include their margins.
+The resolver accepts an object exposing `getBarPlacement()` and `getReservedRegions()`, without depending on Foldable itself. It returns logical `edge`, `inset` and `toolbarTop`. Unsupported APIs and failed reads leave those fields undefined. The current viewport and document direction resolve the physical rail side. Region frames use viewport CSS pixels and already include their margins.
 
 **Defaults remain in `setVerticalBarsLayout` for compatibility:** missing placement disables the Web rail, omitted inset retains the stylesheet's rail width, and omitted toolbar top preserves existing CSS/inline overrides, using 170px only when no value is configured. Explicit device values are restored to the previous inline/CSS configuration when cleared or when the rail is disabled. Empty or unusable reserved regions leave `toolbarTop` undefined rather than inventing a device measurement. The inner-display native toolbar difference when Foldable reports no regions is not resolved by this fallback.
 
