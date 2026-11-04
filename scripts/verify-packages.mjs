@@ -129,15 +129,15 @@ try {
     const top = '--ios-theme-vertical-bars-toolbar-top';
     setVerticalBarsLayout({ edge: 'trailing', toolbarTop: 174 }, root);
     assert.equal(properties.get(top), '174px');
-    setVerticalBarsLayout({ edge: 'leading', toolbarTop: 120 }, root, true);
-    assert.equal(properties.get(top), '120px');
+    setVerticalBarsLayout({ edge: 'leading', toolbarTop: 124 }, root, true);
+    assert.equal(properties.get(top), '124px');
     assert.equal(classes.has('ios-theme-vertical-bars-left'), false);
     for (const toolbarTop of [NaN, Infinity, -1]) {
       setVerticalBarsLayout({ edge: 'trailing', toolbarTop }, root);
       assert.equal(properties.has(top), false);
     }
     setVerticalBarsLayout({ edge: 'trailing' }, root);
-    assert.equal(properties.get(top), '170px');
+    assert.equal(properties.get(top), '174px');
     setVerticalBarsLayout({}, root);
     assert.equal(classes.has('ios-theme-vertical-bars'), false);
     setVerticalBarsLayout({ edge: 'trailing', toolbarTop: 0 }, root);
@@ -166,6 +166,15 @@ try {
     setVerticalBarsLayout({ edge: 'trailing' }, root);
     assert.equal(properties.get(top), '124px', 'a document without a window preserves inline configuration');
 
+    root.ownerDocument.defaultView = {
+      getComputedStyle: () => ({getPropertyValue: () => ''}),
+      dispatchEvent: () => true,
+    };
+    root.style.setProperty(top, '210px', 'important');
+    setVerticalBarsLayout({ edge: 'trailing', inset: 84 }, root);
+    assert.equal(properties.get(top), '210px', 'a detached root preserves inline configuration when computed style is empty');
+    assert.equal(priorities.get(top), 'important');
+
     const animation = { play() {} };
     assert.equal(withNativeUITransition(() => animation)({}), animation);
     await assert.rejects(import('@capacitor/core'), { code: 'ERR_MODULE_NOT_FOUND' });
@@ -175,9 +184,15 @@ try {
   `], { cwd: dir, stdio: 'inherit' });
   writeFileSync(consumer, `
     import { iosTransitionAnimation, withNativeUITransition, setVerticalBarsLayout, applyFoldStateClasses } from '@rdlabo/ionic-theme-ios27';
+    import type { VerticalBarsLayout } from '@rdlabo/ionic-theme-ios27';
+    function existingLayoutConsumer(layout: VerticalBarsLayout) {
+      const edge: 'leading' | 'trailing' | null = layout.edge;
+      return edge;
+    }
+    setVerticalBarsLayout({ edge: undefined, toolbarTop: 174 });
     withNativeUITransition(iosTransitionAnimation);
   `);
-  execFileSync(process.execPath, [resolve('node_modules/typescript/bin/tsc'), '--noEmit', '--strict', '--skipLibCheck', '--module', 'esnext', '--moduleResolution', 'bundler', '--target', 'es2022', '--lib', 'es2022,dom', consumer], { cwd: dir, stdio: 'inherit' });
+  execFileSync(process.execPath, [resolve('node_modules/typescript/bin/tsc'), '--noEmit', '--strict', '--exactOptionalPropertyTypes', '--skipLibCheck', '--module', 'esnext', '--moduleResolution', 'bundler', '--target', 'es2022', '--lib', 'es2022,dom', consumer], { cwd: dir, stdio: 'inherit' });
   console.log('Theme archive, public exports, shared plugin peer, standalone Sass and Capacitor-free consumption verified.');
 } finally {
   rmSync(dir, { recursive: true, force: true });

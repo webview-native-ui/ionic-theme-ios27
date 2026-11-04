@@ -1,8 +1,8 @@
 /** Web layout inputs. Device capabilities belong to the application or native plugin. */
 export interface VerticalBarsLayout {
-  edge?: 'leading' | 'trailing' | null;
+  edge: 'leading' | 'trailing' | null;
   inset?: number;
-  /** Physical toolbar origin in viewport CSS pixels. Omit to retain the established 170px default. */
+  /** Physical toolbar origin in viewport CSS pixels. Omit to preserve CSS overrides or use the 174px theme default. */
   toolbarTop?: number;
 }
 
@@ -10,7 +10,11 @@ const toolbarTopProperty = '--ios-theme-vertical-bars-toolbar-top';
 const toolbarTops = new WeakMap<HTMLElement, { previous: string; priority: string; applied: string }>();
 
 /** Applies only Web layout. Does not enable Native UI or report native availability. */
-export const setVerticalBarsLayout = (layout: VerticalBarsLayout, root?: HTMLElement, rtl?: boolean): void => {
+export const setVerticalBarsLayout = (
+  layout: { [K in keyof VerticalBarsLayout]?: VerticalBarsLayout[K] | undefined },
+  root?: HTMLElement,
+  rtl?: boolean,
+): void => {
   const app = root ?? (typeof document === 'undefined' ? undefined : document.querySelector<HTMLElement>('ion-app'));
   if (!app) return;
   const { edge = null, inset = 0 } = layout;
@@ -31,10 +35,10 @@ export const setVerticalBarsLayout = (layout: VerticalBarsLayout, root?: HTMLEle
     // Preserve existing CSS/inline customization when the caller omits the top.
     const configured =
       layout.toolbarTop === undefined
-        ? (app.ownerDocument.defaultView?.getComputedStyle(app).getPropertyValue(toolbarTopProperty).trim() ??
-          app.style.getPropertyValue(toolbarTopProperty).trim())
+        ? app.ownerDocument.defaultView?.getComputedStyle(app).getPropertyValue(toolbarTopProperty).trim() ||
+          app.style.getPropertyValue(toolbarTopProperty).trim()
         : undefined;
-    const top = layout.toolbarTop ?? (configured ? undefined : 170);
+    const top = layout.toolbarTop ?? (configured ? undefined : 174);
     if (top !== undefined && Number.isFinite(top) && top >= 0) {
       const previous = app.style.getPropertyValue(toolbarTopProperty);
       const priority = app.style.getPropertyPriority(toolbarTopProperty);

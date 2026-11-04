@@ -34,7 +34,7 @@ The classes are physical — `-left` always means the physical left edge — bec
 
 ### Web toolbar placement
 
-The Web rail uses the iPhone Duo toolbar layout even without native geometry: a 170px top origin, 48px square controls, 4px between controls in a group, and 12px between groups. Controls sit at least 24px from the physical edge, or centered in the reserved rail when that requires a larger offset. These defaults also apply to the background controls behind a sheet modal. A back button occupies one control followed by the group gap.
+Without device geometry, the Web rail defaults to the measured iPhone Duo outer-display toolbar layout: a 174px top origin, 48px square controls, 4px between controls in a group, and 12px between groups. Controls sit at least 24px from the physical edge, or centered in the reserved rail when that requires a larger offset. These defaults also apply to the background controls behind a sheet modal. A back button occupies one control followed by the group gap.
 
 `--ios-theme-vertical-bars-toolbar-top` overrides the top origin. Modal toolbar positioning continues to account for the sheet offset. When native measurements are available, they take precedence over these Web defaults.
 
@@ -55,7 +55,7 @@ The resolver uses the SDK-free Native UI integration entry; it does not start na
 
 The resolver accepts an object exposing `getBarPlacement()` and `getReservedRegions()`, without depending on Foldable itself. It returns logical `edge`, `inset` and `toolbarTop`. Unsupported APIs and failed reads leave those fields undefined. The current viewport and document direction resolve the physical rail side. Region frames use viewport CSS pixels and already include their margins.
 
-**Defaults remain in `setVerticalBarsLayout` for compatibility:** missing placement disables the Web rail, omitted inset retains the stylesheet's rail width, and omitted toolbar top preserves existing CSS/inline overrides, using 170px only when no value is configured. Explicit device values are restored to the previous inline/CSS configuration when cleared or when the rail is disabled. Empty or unusable reserved regions leave `toolbarTop` undefined rather than inventing a device measurement. The inner-display native toolbar difference when Foldable reports no regions is not resolved by this fallback.
+**Defaults remain in `setVerticalBarsLayout` for compatibility:** missing placement disables the Web rail, omitted inset retains the stylesheet's rail width, and omitted toolbar top preserves existing CSS/inline overrides, using 174px only when no value is configured. Explicit device values are restored to the previous inline/CSS configuration when cleared or when the rail is disabled. Empty or unusable reserved regions leave `toolbarTop` undefined rather than inventing a device measurement. The measured inner-display toolbar origin is 124px; pass the provider result to use that value. The fixed outer-display fallback does not reproduce inner-display placement when geometry is unavailable.
 
 The resolver is a Native UI adapter API, not a theme or Engine device API. This example requires an adapter version exposing `resolveVerticalBarsLayout`; it is not available in Capacitor Native UI 2.1.0. The theme accepts plain layout values without importing a device SDK.
 
