@@ -10,7 +10,6 @@ export class DuoModeService {
   readonly isDuoDevice = signal(false);
   readonly previewEnabled = signal(false);
   readonly #destroyRef = inject(DestroyRef);
-  #revision = 0;
 
   async initialize() {
     if (Capacitor.getPlatform() !== 'ios') return;
@@ -30,14 +29,13 @@ export class DuoModeService {
   }
 
   async #applyDeviceLayout() {
-    const revision = ++this.#revision;
     // Reserved regions may not be ready during the first WebView bootstrap.
     if (!this.isDuoDevice()) {
       const { foldable } = await Foldable.isDeviceFoldable();
-      if (!foldable || revision !== this.#revision || this.#destroyRef.destroyed) return;
+      if (!foldable) return;
       this.isDuoDevice.set(true);
     }
-    const layout = await resolveVerticalBarsLayout(Foldable);
-    if (revision === this.#revision && !this.#destroyRef.destroyed) setVerticalBarsLayout(layout);
+    if (this.#destroyRef.destroyed) return;
+    setVerticalBarsLayout(await resolveVerticalBarsLayout(Foldable));
   }
 }
