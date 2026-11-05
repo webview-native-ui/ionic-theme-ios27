@@ -10,17 +10,36 @@ This guide upgrades the standalone theme and its Capacitor integration. To adopt
 
 Keep your existing theme imports, stylesheets and animation setup. Native UI remains optional. Applications already using `enableNativeUI()` should keep their existing application-root runtime; the older package-separation migration below does not need to be repeated.
 
-The measured device layout and modal sizing changes are available in theme `2.1.1-0`:
+Update the theme to the latest release:
 
 ```sh
-npm install @rdlabo/ionic-theme-ios27@next
+npm install @rdlabo/ionic-theme-ios27@latest
 ```
 
-For applications using Capacitor Native UI, follow the [2.1.0 upgrade steps](https://docs.rdlabo.dev/projects/capacitor-native-ui/docs/migration) for the paired plugin version, Foldable layout listener and native rebuild. The published plugin `2.1.1-0` includes the geometry resolver but predates the later automatic submit-emphasis and ownership-retention fixes; select a plugin release containing those fixes when testing them.
+For applications using Capacitor Native UI, follow the [2.1.0 upgrade steps](https://docs.rdlabo.dev/projects/capacitor-native-ui/docs/migration) for the paired plugin version, Foldable layout listener and native rebuild.
 
 ### Update device geometry
 
-Replace a placement-only `{ edge, inset }` mapping with `setVerticalBarsLayout(await resolveVerticalBarsLayout(Foldable))` in the existing initial layout and `layoutChange` handler. `setVerticalBarsLayout` belongs to the theme; import `resolveVerticalBarsLayout` from `@rdlabo/capacitor-native-ui/integration`. Do not gate rail layout on a foldable-device capability check. Keep separate posture handling with `applyFoldStateClasses`.
+Replace the placement-only mapping and listener with the geometry resolver. This includes the toolbar origin as well as the rail edge and inset:
+
+```diff
+-import { Foldable, type BarPlacement } from '@erkamyaman/capacitor-foldable';
++import { Foldable } from '@erkamyaman/capacitor-foldable';
++import { resolveVerticalBarsLayout } from '@rdlabo/capacitor-native-ui/integration';
+ import { setVerticalBarsLayout } from '@rdlabo/ionic-theme-ios27';
+
+-const applyPlacement = ({ verticalBarEdge, inset }: BarPlacement) =>
+-  setVerticalBarsLayout({ edge: verticalBarEdge, inset });
+-const listener = await Foldable.addListener('barPlacementChange', applyPlacement);
+-applyPlacement(await Foldable.getBarPlacement());
++const updateLayout = async () => {
++  setVerticalBarsLayout(await resolveVerticalBarsLayout(Foldable));
++};
++const listener = await Foldable.addListener('layoutChange', () => void updateLayout());
++await updateLayout();
+```
+
+Keep `await listener.remove()` in the existing application teardown. If you already use `layoutChange`, replace its layout update instead of adding another listener. Do not gate rail layout on a foldable-device capability check. Keep separate posture handling with `applyFoldStateClasses`.
 
 Remove hardcoded toolbar-top values that were device workarounds, while retaining intentional application customizations. The theme's default is now the measured outer-display origin, 174px; device geometry can supply the inner-display origin, 124px. See [device layout values](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/vertical-bars-layout#apply-device-layout-values) for the complete example and fallback rules.
 
@@ -30,7 +49,7 @@ With `ios-theme-vertical-bars` or `ios-theme-fold-expanded` on `ion-app`, floati
 
 Remove forced-full-width CSS added solely to avoid a rail overlap if you want these floating defaults. Keep deliberate full-screen presentations and application-specific sizing via `--width`, `--max-width` and `--height`. Ordinary phone and tablet defaults are unchanged when neither layout class is active. See [content and overlay layout](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/vertical-bars-layout#content-and-overlay-layout).
 
-Solid submit markup remains `type="submit" fill="solid"`; existing `.button-submit` actions retain their styling-only meaning. With a plugin release containing the corresponding fix, the native rail uses the same emphasis. The application does not need to switch native controls to Web during navigation or modal animation.
+Solid submit markup remains `type="submit" fill="solid"`; existing `.button-submit` actions retain their styling-only meaning. The latest Capacitor Native UI release applies the same emphasis in the native rail. The application does not need to switch native controls to Web during navigation or modal animation.
 
 Verify fold/rotation, rail appearance/disappearance, card/sheet/full-screen modals, light/dark appearance, and ordinary iPhone/browser layouts. Cordova applications should update their [bundled plugin](cordova.md), which pins its own theme version, rather than independently replacing the theme underneath that integration.
 
