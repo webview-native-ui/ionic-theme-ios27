@@ -94,7 +94,7 @@ for (const { type, edge, direction } of [
   { type: 'card', edge: 'left', direction: 'ltr' },
   { type: 'sheet', edge: 'right', direction: 'rtl' },
 ]) {
-  test(`${type} modal respects ${edge} vertical bars in ${direction}`, async ({ page }) => {
+  test(`explicit full-width ${type} modal respects ${edge} vertical bars in ${direction}`, async ({ page }) => {
     await page.setViewportSize({ width: 700, height: 900 });
     await page.goto('/main/index/modal', { waitUntil: 'networkidle' });
     await page.locator('ion-app').evaluate(
@@ -105,6 +105,11 @@ for (const { type, edge, direction } of [
       },
       { direction, edge },
     );
+    // Exercise rail handoff for an explicitly full-width presentation. Floating
+    // card/sheet defaults are checked separately by modal.spec.ts.
+    await page.addStyleTag({
+      content: '@media (max-width: 767px) { ion-modal { --width: 100% !important; --max-width: none !important; } }',
+    });
     await page.getByText(`present:${type}`, { exact: true }).click();
     const modal = page.locator('ion-modal:visible');
     await expect(modal).toBeVisible();

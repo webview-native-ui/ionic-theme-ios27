@@ -77,6 +77,10 @@ The corresponding Ionic safe-area variable is reset inside inset foreground comp
 
 Modal eligibility follows the visible dialog width, not hinge posture or modal type. Left and right remain physical coordinates in RTL; Ionic's `side="start"` and `side="end"` remain logical.
 
+With the iOS 27 theme loaded and either `ios-theme-vertical-bars` or `ios-theme-fold-expanded` enabled on `ion-app`, floating card and sheet modals leave at least 8px at each side. Viewports at least 600px high cap their width at 653px; shorter viewports use the available width minus 16px. Their maximum height leaves at least 8px or the top safe area above the modal. Sheet breakpoints continue to control the visible height. Large-view normal dialogs in these layouts use the same width and top clearance. Ordinary phone and tablet defaults remain unchanged when neither layout class is enabled.
+
+Use Ionic's `--width`, `--max-width`, and `--height` properties for application-specific sizing. An explicitly full-screen presentation can set `--width: 100%`, `--max-width: none`, and `--height: 100%`; its rail eligibility still follows the resulting dialog width.
+
 The mode is component-mode independent: an app can keep Ionic `mode: 'md'` on iOS and still enable Vertical Bars. No component needs `mode="ios"`.
 
 ## Layout API

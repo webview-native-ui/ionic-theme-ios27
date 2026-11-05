@@ -89,3 +89,36 @@ ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
     }
   }
 }
+
+// Foldable and vertical-bar layouts use the measured SwiftUI sheet bounds.
+// Keep ordinary phone and tablet defaults independent of these device layouts.
+:is(ion-app.ios-theme-vertical-bars, ion-app.ios-theme-fold-expanded) ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
+  &.modal-card,
+  &.modal-sheet {
+    --width: calc(100% - 16px);
+    --max-width: none;
+    --height: calc(100% - max(8px, var(--ion-safe-area-top, 0px)));
+
+    @media (min-height: 600px) {
+      --width: min(653px, calc(100% - 16px));
+    }
+  }
+
+  &.modal-card {
+    align-items: flex-end;
+  }
+
+  &.modal-sheet {
+    --height: calc(100% - max(8px, var(--ion-modal-offset-top, 0px)));
+  }
+
+  @media (min-width: 768px) and (min-height: 600px) {
+    --width: min(653px, calc(100% - 16px));
+    --height: calc(100% - max(8px, var(--ion-safe-area-top, 0px)));
+    align-items: flex-end;
+  }
+
+  &.modal-sheet.modal-no-expand-scroll::part(content) {
+    bottom: 0;
+  }
+}

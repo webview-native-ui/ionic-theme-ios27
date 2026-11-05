@@ -42,3 +42,95 @@ test('phone normal modal stays fullscreen', async ({ page }) => {
   await expect.poll(async () => Math.round((await content.boundingBox())!.width)).toBe(390);
   await expect.poll(async () => Math.round((await content.boundingBox())!.height)).toBe(844);
 });
+
+for (const scenario of [
+  { name: 'inner landscape', width: 951, height: 669, safeTop: 0, modalWidth: 653, modalHeight: 661 },
+  { name: 'inner portrait', width: 669, height: 951, safeTop: 82, modalWidth: 653, modalHeight: 869 },
+  { name: 'outer portrait', width: 466, height: 678, safeTop: 0, modalWidth: 450, modalHeight: 670 },
+  { name: 'outer landscape', width: 678, height: 466, safeTop: 0, modalWidth: 662, modalHeight: 458 },
+]) {
+  test(`floating modal bounds in ${scenario.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: scenario.width, height: scenario.height });
+    await page.goto('/main/index/modal');
+    await page.locator('ion-app').evaluate((app, inner) => {
+      app.classList.add(inner ? 'ios-theme-fold-expanded' : 'ios-theme-vertical-bars');
+    }, scenario.name.startsWith('inner'));
+    await page.addStyleTag({ content: `:root { --ion-safe-area-top: ${scenario.safeTop}px !important; }` });
+    await page.getByText('present:card', { exact: true }).click();
+    const modal = page.locator('ion-modal:visible');
+    const bounds = () =>
+      modal.getByRole('dialog').evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return { width: Math.round(r.width), height: Math.round(r.height), top: Math.round(r.top) };
+      });
+    await expect.poll(bounds).toEqual({
+      width: scenario.modalWidth,
+      height: scenario.modalHeight,
+      top: scenario.height - scenario.modalHeight,
+    });
+    await modal.getByRole('button', { name: 'Done', exact: true }).click();
+    await expect(modal).toHaveCount(0);
+    await page.getByText('present:sheet', { exact: true }).click();
+    await expect
+      .poll(() => modal.getByRole('dialog').evaluate((el) => Math.round(el.getBoundingClientRect().width)))
+      .toBe(scenario.modalWidth);
+    await expect.poll(() => modal.evaluate((el: HTMLIonModalElement) => el.getCurrentBreakpoint())).toBe(0.8);
+    await modal.evaluate((el: HTMLIonModalElement) => el.dismiss());
+    await expect(modal).toHaveCount(0);
+    await page.evaluate(async () => {
+      const sheet = document.createElement('ion-modal');
+      sheet.mode = 'ios';
+      sheet.component = document.createElement('div');
+      sheet.breakpoints = [0, 0.5, 1];
+      sheet.initialBreakpoint = 1;
+      sheet.expandToScroll = false;
+      document.querySelector('ion-app')!.append(sheet);
+      await sheet.present();
+    });
+    await expect.poll(bounds).toEqual({
+      width: scenario.modalWidth,
+      height: scenario.modalHeight,
+      top: scenario.height - scenario.modalHeight,
+    });
+  });
+}
+
+test('explicit full-screen sizing overrides the floating defaults', async ({ page }) => {
+  await page.setViewportSize({ width: 951, height: 669 });
+  await page.goto('/main/index/modal?type=card');
+  const modal = page.locator('ion-modal:visible');
+  await expect(modal).toBeVisible();
+  await page.locator('ion-app').evaluate((app) => app.classList.add('ios-theme-fold-expanded'));
+  await modal.evaluate((el: HTMLElement) => {
+    el.style.setProperty('--width', '100%');
+    el.style.setProperty('--max-width', 'none');
+    el.style.setProperty('--height', '100%');
+  });
+  await expect
+    .poll(() =>
+      modal.getByRole('dialog').evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return [Math.round(r.width), Math.round(r.height)];
+      }),
+    )
+    .toEqual([951, 669]);
+});
+
+for (const scenario of [
+  { width: 390, height: 844, cardWidth: 390, cardHeight: 804 },
+  { width: 844, height: 390, cardWidth: 720, cardHeight: 270 },
+]) {
+  test(`ordinary phone card sizing remains unchanged at ${scenario.width}x${scenario.height}`, async ({ page }) => {
+    await page.setViewportSize({ width: scenario.width, height: scenario.height });
+    await page.goto('/main/index/modal?type=card');
+    const modal = page.locator('ion-modal:visible');
+    await expect
+      .poll(() =>
+        modal.getByRole('dialog').evaluate((el) => {
+          const r = el.getBoundingClientRect();
+          return [Math.round(r.width), Math.round(r.height)];
+        }),
+      )
+      .toEqual([scenario.cardWidth, scenario.cardHeight]);
+  });
+}
