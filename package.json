@@ -60,7 +60,7 @@
   "peerDependencies": {
     "@capacitor/core": ">=8.0.0 <9",
     "@ionic/core": ">=8.8.1 <10",
-    "@rdlabo/capacitor-native-ui": "^2.1.0 || ^2.1.1-0"
+    "@rdlabo/capacitor-native-ui": "^2.1.1"
   },
   "peerDependenciesMeta": {
     "@capacitor/core": {
@@ -80,6 +80,6 @@
     "typescript": "^5.9.3",
     "wrangler": "^4.125.0",
     "esbuild": "0.28.1",
-    "@rdlabo/capacitor-native-ui": "2.1.0"
+    "@rdlabo/capacitor-native-ui": "2.1.1"
   }
 }

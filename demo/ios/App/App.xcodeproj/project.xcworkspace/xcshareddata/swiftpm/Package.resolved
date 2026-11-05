@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/webview-native-ui/engine.git",
       "state" : {
-        "revision" : "3b204d55f6ec95d5e9bf53b155e81ac5b408eee5",
-        "version" : "1.0.2-0"
+        "revision" : "309b06feac0fdb6de145ec6e09c2af1f24db73c2",
+        "version" : "1.0.2"
       }
     }
   ],
