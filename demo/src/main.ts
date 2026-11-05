@@ -4,7 +4,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { createAppConfig, type IonicAnimationOptions } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { enableNativeUI } from '@rdlabo/capacitor-native-ui';
-import { DuoModeService } from './app/duo-mode.service';
+import { VerticalBarsDemoService } from './app/vertical-bars-demo.service';
 import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios27';
 
 // The stock-Ionic build exercises vertical bars without loading the iOS theme.
@@ -27,7 +27,7 @@ function loadIOSAnimations(): IonicAnimationOptions {
 
 // Keep the Web fallback available in the demo; applications can choose when to enable it.
 void bootstrapApplication(AppComponent, createAppConfig(loadIOSAnimations()))
-  .then((app) => app.injector.get(DuoModeService).initialize())
+  .then((app) => app.injector.get(VerticalBarsDemoService).initialize())
   .catch((err) => console.error(err));
 const verticalBarsOnly = stockIonic || new URLSearchParams(window.location.search).has('verticalBarsOnly');
 const buttonDefaultFill =

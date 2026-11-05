@@ -19,7 +19,7 @@ import {
   ToggleCustomEvent,
 } from '@demo/ionic';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DuoModeService } from '../duo-mode.service';
+import { VerticalBarsDemoService } from '../vertical-bars-demo.service';
 
 interface IComponent {
   name: string;
@@ -86,7 +86,7 @@ export class IndexPageComponent {
   readonly #route = inject(ActivatedRoute);
   readonly #document = inject(DOCUMENT);
 
-  readonly duoMode = inject(DuoModeService);
+  readonly verticalBars = inject(VerticalBarsDemoService);
 
   async navigateNativeUI() {
     await this.#router.navigate(['native-ui'], { relativeTo: this.#route });
@@ -101,6 +101,6 @@ export class IndexPageComponent {
   }
 
   changeVerticalBarsMode(event: ToggleCustomEvent) {
-    this.duoMode.setPreview(event.detail.checked);
+    this.verticalBars.setPreview(event.detail.checked);
   }
 }

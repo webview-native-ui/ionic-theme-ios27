@@ -39,9 +39,9 @@ const mockNative = async (
   nativeEdge: 'leading' | 'trailing' | null | 'unreported' = 'trailing',
   modalAnimation = false,
   connectionState = false,
-  duoDevice = false,
+  reportedRail = false,
 ) => {
-  const script = ([fail, nativeEdge, modalAnimation, connectionState, duoDevice]: readonly [
+  const script = ([fail, nativeEdge, modalAnimation, connectionState, reportedRail]: readonly [
     boolean,
     'leading' | 'trailing' | null | 'unreported',
     boolean,
@@ -137,12 +137,9 @@ const mockNative = async (
     };
 
     const foldable = {
-      async isDeviceFoldable() {
-        return { foldable: duoDevice, supportsTabletop: duoDevice };
-      },
       async getBarPlacement() {
-        if (nativeEdge === 'unreported') return new Promise(() => {});
-        return { verticalBarEdge: nativeEdge, inset: nativeEdge ? 84 : 0 };
+        if (reportedRail && nativeEdge === 'unreported') return new Promise(() => {});
+        return { verticalBarEdge: reportedRail ? nativeEdge : null, inset: reportedRail && nativeEdge ? 84 : 0 };
       },
       async getFoldState() {
         return { state: 'flat', isSeparating: false, posture: 'flat' };
@@ -169,7 +166,7 @@ const mockNative = async (
       },
     });
   };
-  await page.addInitScript(script, [fail, nativeEdge, modalAnimation, connectionState, duoDevice] as const);
+  await page.addInitScript(script, [fail, nativeEdge, modalAnimation, connectionState, reportedRail] as const);
 };
 
 const activate = (page: Page, label: string, duplicate = false) =>
@@ -1142,6 +1139,11 @@ test('reported rail inset updates the layout without an edge change and clears w
   await expect.poll(width).toBe('');
   await expect(app).not.toHaveClass(/ios-theme-vertical-bars/);
   await expect(page.locator('ion-tab-bar')).toBeVisible();
+  await expect(page.getByText('iPhone Duo Mode', { exact: true })).toBeVisible();
+  await page.getByText('iPhone Duo Mode', { exact: true }).click();
+  await report(null, 0);
+  await expect(app).toHaveClass(/ios-theme-vertical-bars/);
+  await expect(page.getByText('iPhone Duo Mode', { exact: true })).toBeVisible();
 });
 
 for (const initialEdge of [null, 'unreported'] as const) {
