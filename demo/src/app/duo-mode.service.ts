@@ -13,6 +13,9 @@ export class DuoModeService {
 
   async initialize() {
     if (Capacitor.getPlatform() !== 'ios') return;
+    const { foldable } = await Foldable.isDeviceFoldable();
+    if (!foldable || this.#destroyRef.destroyed) return;
+    this.isDuoDevice.set(true);
     const listener = await Foldable.addListener('layoutChange', () => void this.#applyDeviceLayout());
     if (this.#destroyRef.destroyed) {
       await listener.remove();
@@ -29,9 +32,6 @@ export class DuoModeService {
   }
 
   async #applyDeviceLayout() {
-    const { foldable } = await Foldable.isDeviceFoldable();
-    if (!foldable || this.#destroyRef.destroyed) return;
-    this.isDuoDevice.set(true);
     setVerticalBarsLayout(await resolveVerticalBarsLayout(Foldable));
   }
 }
