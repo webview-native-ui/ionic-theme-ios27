@@ -19,8 +19,7 @@ import {
   ToggleCustomEvent,
 } from '@demo/ionic';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { setVerticalBarsLayout } from '@rdlabo/ionic-theme-ios27';
-import { Foldable } from '@erkamyaman/capacitor-foldable';
+import { DuoModeService } from '../duo-mode.service';
 
 interface IComponent {
   name: string;
@@ -87,9 +86,7 @@ export class IndexPageComponent {
   readonly #route = inject(ActivatedRoute);
   readonly #document = inject(DOCUMENT);
 
-  get verticalBarsModeEnabled() {
-    return !!this.#document.querySelector('ion-app.ios-theme-vertical-bars');
-  }
+  readonly duoMode = inject(DuoModeService);
 
   async navigateNativeUI() {
     await this.#router.navigate(['native-ui'], { relativeTo: this.#route });
@@ -103,9 +100,7 @@ export class IndexPageComponent {
     this.#document.documentElement.classList.toggle('ion-palette-dark', event.detail.checked);
   }
 
-  async changeVerticalBarsMode(event: ToggleCustomEvent) {
-    if (!event.detail.checked) return setVerticalBarsLayout({ edge: null });
-    const { verticalBarEdge, inset } = await Foldable.getBarPlacement();
-    setVerticalBarsLayout({ edge: verticalBarEdge ?? 'trailing', inset });
+  changeVerticalBarsMode(event: ToggleCustomEvent) {
+    this.duoMode.setPreview(event.detail.checked);
   }
 }

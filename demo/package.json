@@ -39,14 +39,14 @@
     "@capacitor/ios": "^8.0.0",
     "@capacitor/keyboard": "^8.0.0",
     "@capacitor/status-bar": "^8.0.0",
-    "@erkamyaman/capacitor-foldable": "^8.3.3",
+    "@erkamyaman/capacitor-foldable": "^8.5.0",
     "@ionic/angular": "^9.0.0",
     "@rdlabo/ionic-theme-ios26": "^9.3.0",
     "@rdlabo/ionic-theme-ios27": "file:..",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0",
-    "@rdlabo/capacitor-native-ui": "2.1.0"
+    "@rdlabo/capacitor-native-ui": "2.1.1-0"
   },
   "devDependencies": {
     "@angular/build": "^21.0.0",
@@ -71,7 +71,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.61.1",
     "vitest": "^4.0.0",
-    "@webview-native-ui/engine": "^1.0.0"
+    "@webview-native-ui/engine": "^1.0.2-0"
   },
   "description": "An Ionic project"
 }

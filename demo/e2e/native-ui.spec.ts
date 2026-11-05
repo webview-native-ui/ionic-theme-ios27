@@ -135,6 +135,9 @@ const mockNative = async (
     };
 
     const foldable = {
+      async isDeviceFoldable() {
+        return { foldable: false, supportsTabletop: false };
+      },
       async getBarPlacement() {
         if (nativeEdge === 'unreported') return new Promise(() => {});
         return { verticalBarEdge: nativeEdge, inset: nativeEdge ? 84 : 0 };
