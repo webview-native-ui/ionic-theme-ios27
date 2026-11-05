@@ -3248,12 +3248,22 @@ for (const edge of [null, 'trailing'] as const) {
     await expect(page).toHaveURL(/\/main\/docs/);
     await activate(page, 'Index');
     await expect(segment).toHaveAttribute('data-native-ui-projected', '');
-    // A rejected click must return the unchanged page to native ownership.
+    // Wait for native controls to settle after a rejected selection.
+    const revisionBeforeRejectedClick = await page.evaluate(
+      () => Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.at(-1)!.revision,
+    );
     await page.locator('ion-tab-button[tab="album"]').evaluate((button) => {
       button.addEventListener('click', (event) => event.stopImmediatePropagation(), { capture: true, once: true });
     });
     await activate(page, 'Library');
-    await expect(segment).not.toHaveAttribute('data-native-ui-projected');
+    await expect
+      .poll(() =>
+        page.evaluate((revision) => {
+          const last = Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.at(-1)!;
+          return last.revision > revision && last.controls.some((control) => control.kind === 'segment');
+        }, revisionBeforeRejectedClick),
+      )
+      .toBe(true);
     await expect(segment).toHaveAttribute('data-native-ui-projected', '');
     await expect(page).toHaveURL(/\/main\/index\/native-ui/);
   });
@@ -3270,8 +3280,18 @@ for (const edge of [null, 'trailing'] as const) {
     await page.locator('ion-tab-button[tab="album"]').evaluate((button) => {
       button.addEventListener('click', (event) => event.stopImmediatePropagation(), { capture: true, once: true });
     });
+    const before = await page.evaluate(() => Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.at(-1)!.revision);
     await activate(page, 'Library');
-    await expect(menu).not.toHaveAttribute('data-native-ui-projected');
+    await expect
+      .poll(() =>
+        page.evaluate((revision) => {
+          const last = Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.at(-1)!;
+          return (
+            last.revision > revision && last.controls.some((control) => control.items.some((item) => item.accessibilityLabel === 'GitHub'))
+          );
+        }, before),
+      )
+      .toBe(true);
     await expect(menu).toHaveAttribute('data-native-ui-projected', '');
     await expect(page).toHaveURL(/\/main\/index/);
     await page.getByText('native-ui', { exact: true }).click();
