@@ -60,3 +60,11 @@ test('manual classes place the Web rail on the left in Chrome', async ({ page })
   await expect.poll(async () => (await bar.boundingBox())?.x).toBeLessThan(35);
   await expect(bar).toHaveScreenshot('vertical-bars-left.png', { animations: 'disabled' });
 });
+
+test('Duo preview can be turned off again on Web', async ({ page }) => {
+  await page.goto('/main/index');
+  await enableVerticalBars(page);
+  await page.getByText('iPhone Duo Mode', { exact: true }).click();
+  await expect(page.locator('ion-app')).not.toHaveClass(/ios-theme-vertical-bars/);
+  await expect(page.getByText('iPhone Duo Mode', { exact: true })).toBeVisible();
+});

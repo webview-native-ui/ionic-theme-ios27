@@ -82,7 +82,7 @@ const mockNative = async (page: Page) => {
 
     const foldable = {
       async getBarPlacement() {
-        return { verticalBarEdge: 'trailing' };
+        return { verticalBarEdge: null, inset: 0 };
       },
       async getFoldState() {
         return { state: 'flat', isSeparating: false, posture: 'flat' };

@@ -39,10 +39,12 @@ const mockNative = async (
   nativeEdge: 'leading' | 'trailing' | null | 'unreported' = 'trailing',
   modalAnimation = false,
   connectionState = false,
+  reportedRail = false,
 ) => {
-  const script = ([fail, nativeEdge, modalAnimation, connectionState]: readonly [
+  const script = ([fail, nativeEdge, modalAnimation, connectionState, reportedRail]: readonly [
     boolean,
     'leading' | 'trailing' | null | 'unreported',
+    boolean,
     boolean,
     boolean,
   ]) => {
@@ -136,8 +138,8 @@ const mockNative = async (
 
     const foldable = {
       async getBarPlacement() {
-        if (nativeEdge === 'unreported') return new Promise(() => {});
-        return { verticalBarEdge: nativeEdge, inset: nativeEdge ? 84 : 0 };
+        if (reportedRail && nativeEdge === 'unreported') return new Promise(() => {});
+        return { verticalBarEdge: reportedRail ? nativeEdge : null, inset: reportedRail && nativeEdge ? 84 : 0 };
       },
       async getFoldState() {
         return { state: 'flat', isSeparating: false, posture: 'flat' };
@@ -164,7 +166,7 @@ const mockNative = async (
       },
     });
   };
-  await page.addInitScript(script, [fail, nativeEdge, modalAnimation, connectionState] as const);
+  await page.addInitScript(script, [fail, nativeEdge, modalAnimation, connectionState, reportedRail] as const);
 };
 
 const activate = (page: Page, label: string, duplicate = false) =>
@@ -1102,17 +1104,22 @@ test('verticalBars controls stay operable on Web when the reported rail edge dif
 });
 
 test('reported rail inset updates the layout without an edge change and clears when unavailable', async ({ page }) => {
-  await mockNative(page);
+  await mockNative(page, false, 'trailing', false, false, true);
   await page.goto('/main/index?verticalBarsOnly');
   const app = page.locator('ion-app');
-  await page.getByText('iPhone Duo Mode', { exact: true }).click();
   const width = () => app.evaluate((element) => element.style.getPropertyValue('--ios-theme-vertical-bars-native-inset'));
   await expect.poll(width).toBe('84px');
+  await expect(page.getByText('iPhone Duo Mode', { exact: true })).toHaveCount(0);
 
   const report = async (verticalBarEdge: 'leading' | 'trailing' | null, inset: number) => {
     await page.evaluate(
       ({ verticalBarEdge, inset }) => {
-        Capacitor.registerPlugin<NativeUIMock>('Foldable').notifyListeners('barPlacementChange', { verticalBarEdge, inset });
+        const foldable = Capacitor.registerPlugin<{
+          getBarPlacement(): Promise<{ verticalBarEdge: 'leading' | 'trailing' | null; inset: number }>;
+          notifyListeners(name: string, value: unknown): void;
+        }>('Foldable');
+        foldable.getBarPlacement = async () => ({ verticalBarEdge, inset });
+        foldable.notifyListeners('layoutChange', {});
         Capacitor.registerPlugin<NativeUIMock>('NativeUI').notifyListeners('webViewMetricsChange', { radius: 0, verticalBarEdge });
       },
       { verticalBarEdge, inset },
@@ -1130,8 +1137,13 @@ test('reported rail inset updates the layout without an edge change and clears w
   await expect.poll(width).toBe('96px');
   await report(null, 0);
   await expect.poll(width).toBe('');
-  await expect(app).toHaveClass(/ios-theme-vertical-bars/);
+  await expect(app).not.toHaveClass(/ios-theme-vertical-bars/);
   await expect(page.locator('ion-tab-bar')).toBeVisible();
+  await expect(page.getByText('iPhone Duo Mode', { exact: true })).toBeVisible();
+  await page.getByText('iPhone Duo Mode', { exact: true }).click();
+  await report(null, 0);
+  await expect(app).toHaveClass(/ios-theme-vertical-bars/);
+  await expect(page.getByText('iPhone Duo Mode', { exact: true })).toBeVisible();
 });
 
 for (const initialEdge of [null, 'unreported'] as const) {
