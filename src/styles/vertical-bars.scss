@@ -16,6 +16,19 @@ ion-split-pane.ios-theme-split-pane-half-open {
   --ios-theme-split-pane-width: 50vw;
 }
 
+// Expose resolved lengths to placement consumers, including max()/env() fallbacks.
+@property --ios-theme-vertical-bars-safe-area-left-resolved {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --ios-theme-vertical-bars-safe-area-right-resolved {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
 ion-app.ios-theme-vertical-bars {
   --ios-theme-vertical-bars-safe-area-left-resolved: var(--ios-theme-vertical-bars-safe-area-left, 0px);
   --ios-theme-vertical-bars-safe-area-right-resolved: var(

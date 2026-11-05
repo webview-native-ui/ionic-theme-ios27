@@ -1,6 +1,6 @@
 {
   "name": "@rdlabo/ionic-theme-ios27",
-  "version": "2.1.0",
+  "version": "2.1.1-0",
   "description": "iOS27 Theme for Ionic Framework",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -60,7 +60,7 @@
   "peerDependencies": {
     "@capacitor/core": ">=8.0.0 <9",
     "@ionic/core": ">=8.8.1 <10",
-    "@rdlabo/capacitor-native-ui": "^2.1.0"
+    "@rdlabo/capacitor-native-ui": "^2.1.0 || ^2.1.1-0"
   },
   "peerDependenciesMeta": {
     "@capacitor/core": {
