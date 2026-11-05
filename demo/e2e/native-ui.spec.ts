@@ -3511,6 +3511,10 @@ for (const type of ['normal', 'card', 'sheet']) {
     await page.setViewportSize({ width: 700, height: 900 });
     await mockNative(page);
     await page.goto('/main/index/modal');
+    // This exercises the full-width rail path; floating modal sizing is covered separately.
+    await page.addStyleTag({
+      content: '@media (max-width: 767px) { ion-modal { --width: 100% !important; --max-width: none !important; } }',
+    });
     await page.locator('ion-app').evaluate((app) => app.classList.add('ios-theme-vertical-bars'));
     await page.getByText(`present:${type}`, { exact: true }).click();
     const modal = page.locator('ion-modal.show-modal');
@@ -5514,6 +5518,10 @@ for (const type of ['normal', 'card', 'sheet']) {
     await page.setViewportSize({ width: 700, height: 900 });
     await mockNative(page, false, 'trailing', true);
     await page.goto('/main/index/modal');
+    // This exercises the full-width rail path; floating modal sizing is covered separately.
+    await page.addStyleTag({
+      content: '@media (max-width: 767px) { ion-modal { --width: 100% !important; --max-width: none !important; } }',
+    });
     await page.locator('ion-app').evaluate((app) => app.classList.add('ios-theme-vertical-bars'));
     await page.evaluate(() => {
       Capacitor.registerPlugin<NativeUIMock>('NativeUI').delay = 40;
