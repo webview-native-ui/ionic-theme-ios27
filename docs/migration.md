@@ -8,19 +8,27 @@ This guide upgrades the standalone theme and its Capacitor integration. To adopt
 
 ## Upgrading from 2.1.0
 
-Keep your existing theme imports, stylesheets and animation setup. Native UI remains optional. Applications already using `enableNativeUI()` should keep their existing application-root runtime; the older package-separation migration below does not need to be repeated.
+This section covers the same upgrade in both the theme and Native UI guides; following either one is sufficient. Keep existing theme imports, stylesheets and animation setup. Native UI remains optional. If enabled, keep your existing `enableNativeUI()` call, control selection and application-root runtime. The older package-separation migration below does not need to be repeated.
 
-Update the theme to the latest release:
+### Update dependencies
+
+For theme-only applications, update the theme. No native startup or native rebuild is needed:
 
 ```sh
 npm install @rdlabo/ionic-theme-ios27@latest
 ```
 
-For applications using Capacitor Native UI, follow the [2.1.0 upgrade steps](https://docs.rdlabo.dev/projects/capacitor-native-ui/docs/migration) for the paired plugin version, Foldable layout listener and native rebuild.
+For applications using device rail geometry or Native UI, update all three packages, including Foldable. They are versioned independently; use compatible versions according to the theme's peer dependency:
+
+```sh
+npm install @rdlabo/ionic-theme-ios27@latest @rdlabo/capacitor-native-ui@latest @erkamyaman/capacitor-foldable@latest
+```
+
+The resolver import below supplies layout values without enabling native projection. Theme-only applications without a device rail can skip the device geometry step.
 
 ### Update device geometry
 
-Replace the placement-only mapping and listener with the geometry resolver. This includes the toolbar origin as well as the rail edge and inset:
+If your app maps `getBarPlacement()` directly into `setVerticalBarsLayout({ edge, inset })`, use the resolver to include the toolbar origin from reserved regions:
 
 ```diff
 -import { Foldable, type BarPlacement } from '@erkamyaman/capacitor-foldable';
@@ -39,19 +47,36 @@ Replace the placement-only mapping and listener with the geometry resolver. This
 +await updateLayout();
 ```
 
-Keep `await listener.remove()` in the existing application teardown. If you already use `layoutChange`, replace its layout update instead of adding another listener. Do not gate rail layout on a foldable-device capability check. Keep separate posture handling with `applyFoldStateClasses`.
+Replace the old placement listener rather than adding a second update path. Keep `await listener.remove()` in the existing application teardown. If you already have a `layoutChange` handler, put the resolver call there. Keep existing `foldStateChange` / `applyFoldStateClasses` wiring for posture; the resolver only supplies rail geometry.
 
-Remove hardcoded toolbar-top values that were device workarounds, while retaining intentional application customizations. The theme's default is now the measured outer-display origin, 174px; device geometry can supply the inner-display origin, 124px. See [device layout values](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/vertical-bars-layout#apply-device-layout-values) for the complete example and fallback rules.
+Use the reported rail layout directly, without gating it on `isDeviceFoldable()`, a device name or viewport-size heuristics. Remove fixed toolbar-top workarounds used to imitate device geometry. Intentional application CSS overrides remain supported. Defaults stay in the theme's `setVerticalBarsLayout`, not the resolver. The theme's outer-display default is 174px; reported device geometry can supply the inner-display origin, 124px. See [layout values and fallback behavior](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/vertical-bars-layout#apply-device-layout-values).
 
-### Remove obsolete modal workarounds
+### Review modal overrides and submit appearance
 
-With `ios-theme-vertical-bars` or `ios-theme-fold-expanded` on `ion-app`, floating cards and sheets leave at least 8px at each side. Viewports at least 600px high cap their width at 653px; shorter viewports use the available width minus 16px. Their top clearance follows the safe area, with an 8px minimum. Sheet breakpoints still control visible height.
+Remove a forced-full-width workaround for floating cards/sheets if it was added only to avoid the Duo rail. The theme now supplies measured floating bounds; the plugin also recognizes dialogs overlapping the rail. Keep explicit full-screen sizing when it is a product requirement. With `ios-theme-vertical-bars` or `ios-theme-fold-expanded` on `ion-app`, floating cards and sheets leave at least 8px at each side. Viewports at least 600px high cap their width at 653px; shorter viewports use the available width minus 16px. Top clearance follows the safe area, with an 8px minimum. Sheet breakpoints still control visible height. Application sizing via `--width`, `--max-width` and `--height` remains supported. Ordinary phone and tablet defaults are unchanged when neither layout class is active.
 
-Remove forced-full-width CSS added solely to avoid a rail overlap if you want these floating defaults. Keep deliberate full-screen presentations and application-specific sizing via `--width`, `--max-width` and `--height`. Ordinary phone and tablet defaults are unchanged when neither layout class is active. See [content and overlay layout](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/vertical-bars-layout#content-and-overlay-layout).
+Solid Ionic submit buttons use prominent native glass automatically:
 
-Solid submit markup remains `type="submit" fill="solid"`; existing `.button-submit` actions retain their styling-only meaning. The latest Capacitor Native UI release applies the same emphasis in the native rail. The application does not need to switch native controls to Web during navigation or modal animation.
+```html
+<ion-button type="submit" fill="solid">Save</ion-button>
+```
 
-Verify fold/rotation, rail appearance/disappearance, card/sheet/full-screen modals, light/dark appearance, and ordinary iPhone/browser layouts. Cordova applications should update their [bundled plugin](cordova.md), which pins its own theme version, rather than independently replacing the theme underneath that integration.
+The same appearance applies to existing `.button-submit` actions with solid fill. That class supplies styling, not form submission. Clear and outline fills do not gain submit emphasis. Existing explicit `data-native-ui="button-submit"` declarations remain supported.
+
+Native controls keep ownership during navigation, modal animations and image handoffs. An image shown in the WebView is still the native projection's presentation, not a return to the original Web button. Retest and remove transition-specific workarounds that force those controls back to Web. Keep intentional opt-outs and handling for unsupported controls or native failures; no additional animation flags or second runtime are needed.
+
+### Sync and rebuild
+
+If your application uses Capacitor, build the Web bundle and sync the existing native project after updating its plugins:
+
+```sh
+npm run build
+npx cap sync ios
+```
+
+Then rebuild and run the native app. SwiftPM resolves the plugin's Engine dependency. If you use CocoaPods with a direct npm Engine dependency, align it with the version declared by the installed plugin before syncing; follow [the CocoaPods setup](https://docs.rdlabo.dev/projects/capacitor-native-ui/docs/setup#4-build-sync-and-run). Engine implementation changes do not require changing ordinary application imports.
+
+Check both rail edges, rail disappearance, fold/rotation, card/sheet/full-screen presentation, and solid submit actions. Also check ordinary iPhone and browser fallback. For Cordova, use the [bundled integration](https://github.com/webview-native-ui/cordova-plugin); its pinned theme and native changes arrive through a Cordova plugin release rather than these Capacitor installation commands.
 
 ## Native UI package separation
 
