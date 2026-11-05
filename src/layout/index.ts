@@ -4,6 +4,8 @@ export interface VerticalBarsLayout {
   inset?: number;
   /** Physical toolbar origin in viewport CSS pixels. Omit to preserve CSS overrides or use the 174px theme default. */
   toolbarTop?: number;
+  /** Bottom of the rail-side top occlusion (status corner); the usable rail zone starts below it. */
+  railBottom?: number;
 }
 
 const toolbarTopProperty = '--ios-theme-vertical-bars-toolbar-top';
@@ -22,13 +24,16 @@ export const setVerticalBarsLayout = (
   const direction = rtl ?? app.closest('[dir]')?.getAttribute('dir') === 'rtl';
   const nativeInset = edge && Number.isFinite(inset) && inset > 0 ? inset : 0;
   // Identical resolved input must not re-run: refresh dispatches a native re-scan.
-  const applied = `${edge ?? ''}|${nativeInset}|${layout.toolbarTop ?? ''}|${direction}`;
+  const applied = `${edge ?? ''}|${nativeInset}|${layout.toolbarTop ?? ''}|${layout.railBottom ?? ''}|${direction}`;
   if (appliedLayouts.get(app) === applied) return;
   appliedLayouts.set(app, applied);
   app.classList.toggle('ios-theme-vertical-bars', edge !== null);
   app.classList.toggle('ios-theme-vertical-bars-left', edge !== null && (edge === 'leading') !== direction);
   if (nativeInset > 0) app.style.setProperty('--ios-theme-vertical-bars-native-inset', `${nativeInset}px`);
   else app.style.removeProperty('--ios-theme-vertical-bars-native-inset');
+  if (edge && typeof layout.railBottom === 'number' && Number.isFinite(layout.railBottom) && layout.railBottom > 0)
+    app.style.setProperty('--ios-theme-vertical-bars-rail-bottom', `${layout.railBottom}px`);
+  else app.style.removeProperty('--ios-theme-vertical-bars-rail-bottom');
   // Restore only while the value still matches our write; identical application writes are indistinguishable.
   const saved = toolbarTops.get(app);
   if (saved) {
