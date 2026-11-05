@@ -29,13 +29,9 @@ export class DuoModeService {
   }
 
   async #applyDeviceLayout() {
-    // Reserved regions may not be ready during the first WebView bootstrap.
-    if (!this.isDuoDevice()) {
-      const { foldable } = await Foldable.isDeviceFoldable();
-      if (!foldable) return;
-      this.isDuoDevice.set(true);
-    }
-    if (this.#destroyRef.destroyed) return;
+    const { foldable } = await Foldable.isDeviceFoldable();
+    if (!foldable || this.#destroyRef.destroyed) return;
+    this.isDuoDevice.set(true);
     setVerticalBarsLayout(await resolveVerticalBarsLayout(Foldable));
   }
 }
