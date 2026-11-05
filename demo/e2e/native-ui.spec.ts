@@ -1110,9 +1110,9 @@ test('reported rail inset updates the layout without an edge change and clears w
   await mockNative(page, false, 'trailing', false, false, true);
   await page.goto('/main/index?verticalBarsOnly');
   const app = page.locator('ion-app');
-  await expect(page.getByText('iPhone Duo Mode', { exact: true })).toBeHidden();
   const width = () => app.evaluate((element) => element.style.getPropertyValue('--ios-theme-vertical-bars-native-inset'));
   await expect.poll(width).toBe('84px');
+  await expect(page.getByText('iPhone Duo Mode', { exact: true })).toHaveCount(0);
 
   const report = async (verticalBarEdge: 'leading' | 'trailing' | null, inset: number) => {
     await page.evaluate(
