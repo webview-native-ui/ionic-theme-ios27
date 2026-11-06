@@ -122,6 +122,8 @@ for (const tag of ['button', 'div', 'ion-button', 'span-auto', 'span-sized']) {
           const start = performance.now();
           while (performance.now() - start < 350) {
             await new Promise(requestAnimationFrame);
+            // Sample after every rAF callback has applied this frame's geometry.
+            await new Promise((resolve) => setTimeout(resolve, 0));
             const rect = Array.from(
               (element.shadowRoot ?? element).querySelectorAll<HTMLImageElement>('img[data-native-ui-projection-node]'),
             )
