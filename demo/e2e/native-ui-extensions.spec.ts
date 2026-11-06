@@ -50,7 +50,10 @@ test.beforeEach(async ({ page }) => {
         w.snapshots.push(snapshot);
         return { revision: snapshot.revision, rejectedControls: w.reject ? snapshot.controls.map((c: any) => c.id) : [] };
       },
-      async clear() {},
+      async clear(options: { revision: number }) {
+        w.snapshots.push({ revision: options.revision, viewportWidth: 0, controls: [] });
+        return { revision: options.revision };
+      },
       async completeExtensionAction(reply: any) {
         w.replies.push(reply);
       },
@@ -149,13 +152,16 @@ test('overlay, manual suspension and teardown restore Web ownership', async ({ p
     document.body.append(overlay);
     overlay.dispatchEvent(new Event('ionAlertWillPresent', { bubbles: true }));
   });
-  await expect(page.locator('[data-counter]')).not.toHaveAttribute('data-native-ui-projected', '');
+  await expect.poll(() => page.evaluate(() => (window as any).snapshots.at(-1)?.controls)).toEqual([]);
   await page.evaluate(() => {
     const overlay = document.querySelector('ion-alert')!;
     overlay.dispatchEvent(new Event('ionAlertDidDismiss', { bubbles: true }));
     overlay.remove();
   });
   await expect(page.locator('[data-counter]')).toHaveAttribute('data-native-ui-projected', '');
+  await expect
+    .poll(() => page.evaluate(() => (window as any).snapshots.at(-1)?.controls.some((control: any) => control.kind === 'extension')))
+    .toBe(true);
   await page.evaluate(async () => {
     (window as any).lease = await (window as any).handle.suspend();
   });
