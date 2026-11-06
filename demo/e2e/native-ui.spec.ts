@@ -3620,7 +3620,6 @@ for (const type of ['normal', 'sheet'])
     await page.locator('ion-app').evaluate((app) => app.classList.add('ios-theme-vertical-bars'));
     const bar = page.locator('ion-tab-bar');
     await expect(bar).toHaveAttribute('data-native-ui-projected', '');
-    await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'tab-bar')).toBe(true);
     await expect(bar).not.toHaveAttribute('data-native-ui-fading');
     await bar.evaluate((element) => {
       const animate = element.animate.bind(element);
@@ -3636,6 +3635,7 @@ for (const type of ['normal', 'sheet'])
     await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'tab-bar')).toBe(false);
     await page.locator('ion-modal.show-modal').evaluate((modal: HTMLIonModalElement) => modal.dismiss());
     await expect(page.locator('ion-modal.show-modal')).toHaveCount(0);
+    await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'tab-bar')).toBe(true);
     await expect(bar).toHaveAttribute('data-native-ui-projected', '');
     await expect(bar).not.toHaveAttribute('data-native-ui-fading');
     await expect(bar).not.toHaveAttribute('data-fade-frames');
@@ -3928,11 +3928,6 @@ for (const standalone of [false, true])
       expect(await relay.evaluate(() => document.compatMode)).toBe('CSS1Compat');
       expect((await relay.getByRole('button', { name: 'Increment', exact: true }).boundingBox())!.height).toBeLessThan(80);
       await expect(trigger).toHaveAttribute('data-native-ui-vertical-bars-member', '', { timeout: 15000 });
-      await expect
-        .poll(async () =>
-          (await nativeControls(page)).some((control) => control.items.some((item) => item.accessibilityLabel === 'Open popover')),
-        )
-        .toBe(true);
       expect(await geometry()).toEqual(before);
       expect(
         await page.evaluate(
@@ -4261,6 +4256,11 @@ for (const edge of ['leading', 'trailing'] as const)
       await page.getByRole('button', { name: 'Close popover', exact: true }).click();
       await expect(page.locator('ion-popover[trigger="native-popover-trigger"]')).toHaveClass(/overlay-hidden/);
       await expect(trigger).toHaveAttribute('data-native-ui-vertical-bars-member', '', { timeout: 15000 });
+      await expect
+        .poll(async () =>
+          (await nativeControls(page)).some((control) => control.items.some((item) => item.accessibilityLabel === 'Open popover')),
+        )
+        .toBe(true);
       expect(page.context().pages()).toHaveLength(1);
     }
   });
