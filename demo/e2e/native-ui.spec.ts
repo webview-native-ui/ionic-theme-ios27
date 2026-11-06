@@ -5419,14 +5419,20 @@ for (const native of [true, false]) {
       }
       await page.getByText('present:normal', { exact: true }).click();
       const modal = page.locator('ion-modal.show-modal');
+      const coveredBack = page.locator('ion-app > ion-back-button.ios-theme-vertical-bars-back-button-projection');
+      await expect(coveredBack).toBeVisible();
+      await expect(coveredBack).toHaveAttribute('inert', '');
+      if (native)
+        await expect
+          .poll(async () =>
+            (await nativeControls(page)).some((control) => control.items.some((item) => item.accessibilityLabel === 'Covered action')),
+          )
+          .toBe(false);
       const retained =
         native &&
         (await (grouped ? source.locator('..') : source).evaluate(
           (element) => element.hasAttribute('data-native-ui-vertical-bars') || element.hasAttribute('data-native-ui-vertical-bars-member'),
         ));
-      const coveredBack = page.locator('ion-app > ion-back-button.ios-theme-vertical-bars-back-button-projection');
-      await expect(coveredBack).toBeVisible();
-      await expect(coveredBack).toHaveAttribute('inert', '');
       const coveredBackButton = coveredBack.locator('button').first();
       await coveredBackButton.focus();
       await expect(coveredBackButton).not.toBeFocused();
