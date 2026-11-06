@@ -3262,6 +3262,7 @@ for (const edge of [null, 'trailing'] as const) {
     await expect(page).toHaveURL(/\/main\/docs/);
     await activate(page, 'Index');
     await expect(segment).toHaveAttribute('data-native-ui-projected', '');
+    await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'segment')).toBe(true);
     // Observe the rejected click itself; an unchanged view need not send a new revision.
     const tab = page.locator('ion-tab-button[tab="album"]');
     await tab.evaluate((button) => {
