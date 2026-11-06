@@ -159,6 +159,9 @@ test('overlay, manual suspension and teardown restore Web ownership', async ({ p
     overlay.remove();
   });
   await expect(page.locator('[data-counter]')).toHaveAttribute('data-native-ui-projected', '');
+  await expect
+    .poll(() => page.evaluate(() => (window as any).snapshots.at(-1)?.controls.some((control: any) => control.kind === 'extension')))
+    .toBe(true);
   await page.evaluate(async () => {
     (window as any).lease = await (window as any).handle.suspend();
   });

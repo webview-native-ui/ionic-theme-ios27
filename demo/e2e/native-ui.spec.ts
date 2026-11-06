@@ -1510,6 +1510,8 @@ test('modal suspension, tab hiding and destroy restore ownership', async ({ page
     .poll(() => page.evaluate(() => Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.at(-1)!))
     .toMatchObject({ controls: [], transitionDuration: 0 });
   await page.getByRole('button', { name: 'Close modal', exact: true }).click();
+  await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'button')).toBe(true);
+  await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'tab-bar')).toBe(true);
   await expect(button).toHaveAttribute('data-native-ui-projected', '');
   await tabs.evaluate((element) => (element.style.display = 'none'));
   await expect(tabs).not.toHaveAttribute('data-native-ui-projected');
@@ -1946,6 +1948,7 @@ test('demo overlay variants retire native controls and restore them after dismis
         await expect.poll(() => nativeControls(page)).toEqual([]);
         await overlay.evaluate((element: HTMLElement & { dismiss(): Promise<boolean> }) => element.dismiss());
         await expect(page.locator('ion-tab-bar')).toHaveAttribute('data-native-ui-projected', '');
+        await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'tab-bar')).toBe(true);
         expect(await page.evaluate(() => (document.querySelector('ion-app') as TestAppElement).nativeUI!.getStatus().state)).not.toBe(
           'stopped',
         );
@@ -3617,6 +3620,7 @@ for (const type of ['normal', 'sheet'])
     await page.locator('ion-app').evaluate((app) => app.classList.add('ios-theme-vertical-bars'));
     const bar = page.locator('ion-tab-bar');
     await expect(bar).toHaveAttribute('data-native-ui-projected', '');
+    await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'tab-bar')).toBe(true);
     await expect(bar).not.toHaveAttribute('data-native-ui-fading');
     await bar.evaluate((element) => {
       const animate = element.animate.bind(element);
@@ -3924,6 +3928,11 @@ for (const standalone of [false, true])
       expect(await relay.evaluate(() => document.compatMode)).toBe('CSS1Compat');
       expect((await relay.getByRole('button', { name: 'Increment', exact: true }).boundingBox())!.height).toBeLessThan(80);
       await expect(trigger).toHaveAttribute('data-native-ui-vertical-bars-member', '', { timeout: 15000 });
+      await expect
+        .poll(async () =>
+          (await nativeControls(page)).some((control) => control.items.some((item) => item.accessibilityLabel === 'Open popover')),
+        )
+        .toBe(true);
       expect(await geometry()).toEqual(before);
       expect(
         await page.evaluate(
@@ -4278,6 +4287,11 @@ for (const refusal of ['disabled', 'md'])
     await expect(page.getByText('Count: 1', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Close popover', exact: true }).click();
     await expect(trigger).toHaveAttribute('data-native-ui-vertical-bars-member', '');
+    await expect
+      .poll(async () =>
+        (await nativeControls(page)).some((control) => control.items.some((item) => item.accessibilityLabel === 'Open popover')),
+      )
+      .toBe(true);
   });
 
 for (const phase of ['click', 'presented']) {
@@ -4710,6 +4724,7 @@ test('Vertical Bars picker keeps input but cannot override a Web alert', async (
   await expect.poll(() => nativeControls(page)).toEqual([]);
   await page.locator('ion-alert').evaluate((overlay: HTMLIonAlertElement) => overlay.dismiss());
   await expect(back).toHaveAttribute('data-native-ui-vertical-bars', '');
+  await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'back-button')).toBe(true);
 });
 
 for (const context of ['inherited native styles', 'sibling-dependent Web fallback', 'container Web fallback']) {
@@ -4759,6 +4774,11 @@ for (const context of ['inherited native styles', 'sibling-dependent Web fallbac
       await page.getByRole('button', { name: 'Close popover', exact: true }).click();
     }
     await expect(page.locator('#native-popover-trigger')).toHaveAttribute('data-native-ui-vertical-bars-member', '');
+    await expect
+      .poll(async () =>
+        (await nativeControls(page)).some((control) => control.items.some((item) => item.accessibilityLabel === 'Open popover')),
+      )
+      .toBe(true);
   });
 }
 
@@ -5448,6 +5468,11 @@ for (const native of [true, false]) {
       if (native) {
         await expect(action).toHaveCount(0);
         await expect(grouped ? source.locator('..') : source).toHaveAttribute('data-native-ui-projected', '');
+        await expect
+          .poll(async () =>
+            (await nativeControls(page)).some((control) => control.items.some((item) => item.accessibilityLabel === 'Covered action')),
+          )
+          .toBe(true);
       } else {
         await expect(surface).not.toHaveAttribute('inert');
         await action.click();
