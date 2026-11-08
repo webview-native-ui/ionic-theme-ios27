@@ -60,7 +60,7 @@ ion-app.ios-theme-vertical-bars ion-modal.ios-theme-vertical-bars-modal {
 
 // Supply material defaults only to Web projections, never to ordinary controls.
 :is(ion-app.ios-theme-vertical-bars, ion-modal.ios-theme-vertical-bars-modal).ios-theme-vertical-bars-toolbar-ready
-  > :is(ion-menu-button, ion-button).ios-theme-vertical-bars-toolbar-projection {
+  :is(ion-menu-button, ion-button).ios-theme-vertical-bars-toolbar-projection {
   --ios26-glass-background-rgb: var(--ion-background-color-rgb, 255, 255, 255);
   --ios26-glass-border-color-rgb: var(--ion-background-color-rgb, 255, 255, 255);
   --ios26-glass-box-shadow-color-rgb: var(--ion-text-color-rgb, 0, 0, 0);
@@ -377,7 +377,9 @@ ion-app.ios-theme-vertical-bars ion-modal.ios-theme-vertical-bars-modal.ios-them
     ) {
     display: none;
   }
-  > ion-back-button.ios-theme-vertical-bars-back-button-projection {
+  // Snapshot hosts can move into the presenting page during a card transition.
+  // Their rail placement belongs to the projection, rather than its immediate parent.
+  ion-back-button.ios-theme-vertical-bars-back-button-projection {
     position: fixed;
     z-index: 1001;
     top: var(--ios-theme-vertical-bars-modal-toolbar-top, var(--ios-theme-vertical-bars-toolbar-top, 174px));
@@ -387,7 +389,7 @@ ion-app.ios-theme-vertical-bars ion-modal.ios-theme-vertical-bars-modal.ios-them
     height: 48px;
     margin: 0;
   }
-  > :is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
+  :is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
     position: fixed;
     z-index: 1001;
     top: calc(
@@ -407,11 +409,11 @@ ion-app.ios-theme-vertical-bars ion-modal.ios-theme-vertical-bars-modal.ios-them
       font-size: 22px;
     }
   }
-  > ion-menu-button:is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
+  ion-menu-button:is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
     @include api.glass-control-background;
     border-radius: 50%;
   }
-  > ion-button:is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
+  ion-button:is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
     &:not(.button-solid):not(.button-outline) {
       --background: rgba(var(--ios-theme-glass-background-rgb, var(--ios26-glass-background-rgb)), 0.72);
     }
@@ -421,7 +423,7 @@ ion-app.ios-theme-vertical-bars ion-modal.ios-theme-vertical-bars-modal.ios-them
       @include api.glass-control-background($include-background: false, $shadow: var(--box-shadow));
     }
   }
-  > ion-buttons:is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
+  ion-buttons:is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -445,8 +447,8 @@ ion-app.ios-theme-vertical-bars ion-modal.ios-theme-vertical-bars-modal.ios-them
 
 ion-app.ios-theme-vertical-bars.ios-theme-vertical-bars-left,
 ion-app.ios-theme-vertical-bars.ios-theme-vertical-bars-left ion-modal.ios-theme-vertical-bars-modal {
-  > ion-back-button.ios-theme-vertical-bars-back-button-projection,
-  > :is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
+  ion-back-button.ios-theme-vertical-bars-back-button-projection,
+  :is(.ios, .md).ios-theme-vertical-bars-toolbar-projection {
     right: auto;
     left: max(24px, calc((var(--ios-theme-vertical-bars-safe-area-left-resolved) - 48px) / 2));
   }
