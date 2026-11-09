@@ -12,6 +12,8 @@ export default defineConfig({
   workers: process.env['CI'] ? 4 : undefined,
   forbidOnly: !!process.env['CI'],
   retries: process.env['CI'] ? 2 : 0,
+  // Retries retain diagnostics; a flaky first attempt must still fail the guard.
+  failOnFlakyTests: !!process.env['CI'],
   reporter: 'html',
   use: {
     baseURL: `http://localhost:${port}`,
