@@ -5637,6 +5637,12 @@ for (const type of ['normal', 'card', 'sheet']) {
       content: '@media (max-width: 767px) { ion-modal { --width: 100% !important; --max-width: none !important; } }',
     });
     await page.locator('ion-app').evaluate((app) => app.classList.add('ios-theme-vertical-bars'));
+    // Cover an established native page, not a page still entering from the router.
+    const back = page.locator('app-modal ion-back-button:not(.ion-cloned-element)').first();
+    await expect(back).toHaveAttribute('data-native-ui-vertical-bars', '');
+    await expect
+      .poll(() => page.evaluate(() => (document.querySelector('ion-app') as TestAppElement).nativeUI!.getStatus().state))
+      .toBe('native');
     await page.evaluate(() => {
       Capacitor.registerPlugin<NativeUIMock>('NativeUI').delay = 40;
       const duplicates: boolean[] = [];
