@@ -1511,7 +1511,10 @@ test('modal suspension, tab hiding and destroy restore ownership', async ({ page
   await expect
     .poll(() =>
       page.evaluate(
-        (offset) => Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.slice(offset).find((snapshot) => !snapshot.controls.length),
+        (offset) =>
+          Capacitor.registerPlugin<NativeUIMock>('NativeUI')
+            .updates.slice(offset)
+            .find((snapshot) => !snapshot.controls.length),
         beforeModal,
       ),
     )
