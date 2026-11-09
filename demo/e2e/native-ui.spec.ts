@@ -1505,10 +1505,18 @@ test('modal suspension, tab hiding and destroy restore ownership', async ({ page
   const tabs = page.locator('ion-tab-bar');
   await expect(button).toHaveAttribute('data-native-ui-projected', '');
   await expect(tabs).toHaveAttribute('data-native-ui-projected', '');
+  const beforeModal = await page.evaluate(() => Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.length);
   await page.getByRole('button', { name: 'Open modal', exact: true }).click();
+  // The first retirement must be immediate; later empty snapshots may use the default duration.
   await expect
-    .poll(() => page.evaluate(() => Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.at(-1)!))
+    .poll(() =>
+      page.evaluate(
+        (offset) => Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.slice(offset).find((snapshot) => !snapshot.controls.length),
+        beforeModal,
+      ),
+    )
     .toMatchObject({ controls: [], transitionDuration: 0 });
+  await expect.poll(() => nativeControls(page)).toEqual([]);
   await page.getByRole('button', { name: 'Close modal', exact: true }).click();
   await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'button')).toBe(true);
   await expect.poll(async () => (await nativeControls(page)).some((control) => control.kind === 'tab-bar')).toBe(true);
