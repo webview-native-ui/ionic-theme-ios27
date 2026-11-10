@@ -134,3 +134,19 @@ for (const scenario of [
       .toEqual([scenario.cardWidth, scenario.cardHeight]);
   });
 }
+
+test('ordinary modal sizing remains overridable by custom CSS', async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 800 });
+  await page.goto('/main/index/modal?type=normal');
+  await page.addStyleTag({ content: 'ion-modal.ios.custom-sized { --width: 420px; --height: 400px; }' });
+  const modal = page.locator('ion-modal:visible');
+  await modal.evaluate((el) => el.classList.add('custom-sized'));
+  await expect
+    .poll(() =>
+      modal.getByRole('dialog').evaluate((el) => {
+        const bounds = el.getBoundingClientRect();
+        return [Math.round(bounds.width), Math.round(bounds.height)];
+      }),
+    )
+    .toEqual([420, 400]);
+});

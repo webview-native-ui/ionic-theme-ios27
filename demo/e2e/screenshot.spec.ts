@@ -206,3 +206,40 @@ test.describe('Screenshot Tests - VerticalBars Back Button', () => {
     await expect(page).toHaveScreenshot('vertical-bars-toolbar-actions.png', { animations: 'disabled' });
   });
 });
+
+test.describe('Screenshot Tests - Datetime Modal', () => {
+  for (const scenario of [
+    { name: 'desktop', width: 1200, height: 800, folded: false, customWidth: false },
+    { name: 'phone', width: 390, height: 844, folded: false, customWidth: false },
+    { name: 'folded', width: 951, height: 669, folded: true, customWidth: false },
+    { name: 'custom-width', width: 1200, height: 800, folded: false, customWidth: true },
+  ]) {
+    for (const dark of [false, true]) {
+      test(`should match datetime modal ${scenario.name}${dark ? ' dark' : ''}`, async ({ page }) => {
+        await page.addInitScript(() => (document.IONIC_E2E_TESTING = true));
+        await page.setViewportSize({ width: scenario.width, height: scenario.height });
+        await page.goto('/main/index/date-and-time-pickers', { waitUntil: 'networkidle' });
+        await page.evaluate(
+          async ({ dark, folded, customWidth }) => {
+            document.documentElement.classList.toggle('ion-palette-dark', dark);
+            if (folded) document.querySelector('ion-app')!.classList.add('ios-theme-fold-expanded');
+            if (customWidth) {
+              const picker = document.querySelector<HTMLElement>('ion-datetime#datetime')!;
+              picker.style.width = '360px';
+              picker.style.maxWidth = 'none';
+            }
+            await document.fonts.ready;
+          },
+          { dark, folded: scenario.folded, customWidth: scenario.customWidth },
+        );
+        const modal = page.locator('ion-modal.ion-datetime-button-overlay');
+        await modal.evaluate((el) => {
+          el.addEventListener('ionModalDidPresent', () => el.setAttribute('data-test-presented', 'true'), { once: true });
+        });
+        await page.locator('ion-datetime-button button').first().click();
+        await expect(modal).toHaveAttribute('data-test-presented', 'true');
+        await expect(page).toHaveScreenshot(`datetime-modal-${scenario.name}${dark ? '-dark' : ''}.png`, { animations: 'disabled' });
+      });
+    }
+  }
+});
