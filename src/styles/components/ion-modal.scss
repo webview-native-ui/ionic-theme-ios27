@@ -33,8 +33,11 @@ ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
     // Datetime Button overlays retain Ionic's content-based dimensions.
     &:where(:not(.ion-datetime-button-overlay)) {
       --border-radius: 32px;
-      --width: 580px;
-      --height: min(660px, calc(100% - 64px));
+      // Dimension defaults must yield to component-scoped sizing.
+      :where(&) {
+        --width: 580px;
+        --height: min(660px, calc(100% - 64px));
+      }
       --box-shadow: 0 24px 64px color-mix(in srgb, var(--ion-box-shadow-color, #000) 18%, transparent);
 
       &:not(.modal-card, .modal-sheet)::part(content) {
@@ -42,13 +45,13 @@ ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
         clip-path: inset(0 round var(--border-radius));
       }
 
-      &.modal-card {
+      :where(&.modal-card) {
         --width: min(936px, calc(100% - 40px));
         --max-width: 936px;
         --height: calc(100% - max(32px, var(--ion-safe-area-top, 0px)) * 2);
       }
 
-      &.modal-sheet {
+      :where(&.modal-sheet) {
         --width: min(936px, calc(100vw - 40px));
         --height: calc(100% - max(32px, var(--ion-modal-offset-top, 0px)));
       }
@@ -97,8 +100,8 @@ ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
 // Keep ordinary phone and tablet defaults independent of these device layouts.
 :is(ion-app.ios-theme-vertical-bars, ion-app.ios-theme-fold-expanded)
   ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled, .ion-datetime-button-overlay) {
-  &.modal-card,
-  &.modal-sheet {
+  :where(&.modal-card),
+  :where(&.modal-sheet) {
     --width: calc(100% - 16px);
     --max-width: none;
     --height: calc(100% - max(8px, var(--ion-safe-area-top, 0px)));
@@ -112,14 +115,16 @@ ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
     align-items: flex-end;
   }
 
-  &.modal-sheet {
-    --height: calc(100% - max(8px, var(--ion-modal-offset-top, 0px)));
+  @media (min-width: 768px) and (min-height: 600px) {
+    :where(&) {
+      --width: min(653px, calc(100% - 16px));
+      --height: calc(100% - max(8px, var(--ion-safe-area-top, 0px)));
+    }
+    align-items: flex-end;
   }
 
-  @media (min-width: 768px) and (min-height: 600px) {
-    --width: min(653px, calc(100% - 16px));
-    --height: calc(100% - max(8px, var(--ion-safe-area-top, 0px)));
-    align-items: flex-end;
+  :where(&.modal-sheet) {
+    --height: calc(100% - max(8px, var(--ion-modal-offset-top, 0px)));
   }
 
   &.modal-sheet.modal-no-expand-scroll::part(content) {

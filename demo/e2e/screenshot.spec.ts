@@ -209,10 +209,13 @@ test.describe('Screenshot Tests - VerticalBars Back Button', () => {
 
 test.describe('Screenshot Tests - Datetime Modal', () => {
   for (const scenario of [
-    { name: 'desktop', width: 1200, height: 800, folded: false, customWidth: false },
-    { name: 'phone', width: 390, height: 844, folded: false, customWidth: false },
-    { name: 'folded', width: 951, height: 669, folded: true, customWidth: false },
-    { name: 'custom-width', width: 1200, height: 800, folded: false, customWidth: true },
+    { name: 'desktop', width: 1200, height: 800, folded: false, customWidth: false, customOverlay: false },
+    { name: 'phone', width: 390, height: 844, folded: false, customWidth: false, customOverlay: false },
+    { name: 'folded', width: 951, height: 669, folded: true, customWidth: false, customOverlay: false },
+    { name: 'custom-width', width: 1200, height: 800, folded: false, customWidth: true, customOverlay: false },
+    { name: 'custom-overlay', width: 1200, height: 800, folded: false, customWidth: false, customOverlay: true },
+    { name: 'custom-overlay-folded', width: 951, height: 669, folded: true, customWidth: false, customOverlay: true },
+    { name: 'custom-overlay-phone', width: 390, height: 844, folded: false, customWidth: false, customOverlay: true },
   ]) {
     for (const dark of [false, true]) {
       test(`should match datetime modal ${scenario.name}${dark ? ' dark' : ''}`, async ({ page }) => {
@@ -220,7 +223,7 @@ test.describe('Screenshot Tests - Datetime Modal', () => {
         await page.setViewportSize({ width: scenario.width, height: scenario.height });
         await page.goto('/main/index/date-and-time-pickers', { waitUntil: 'networkidle' });
         await page.evaluate(
-          async ({ dark, folded, customWidth }) => {
+          async ({ dark, folded, customWidth, customOverlay }) => {
             document.documentElement.classList.toggle('ion-palette-dark', dark);
             if (folded) document.querySelector('ion-app')!.classList.add('ios-theme-fold-expanded');
             if (customWidth) {
@@ -228,15 +231,35 @@ test.describe('Screenshot Tests - Datetime Modal', () => {
               picker.style.width = '360px';
               picker.style.maxWidth = 'none';
             }
+            if (customOverlay) {
+              // Equivalent specificity to an Angular component's scoped ion-modal rule.
+              const style = document.createElement('style');
+              style.textContent = 'ion-modal[data-custom-datetime] { --width: auto; --height: auto; }';
+              document.head.append(style);
+              const modal = document.createElement('ion-modal');
+              modal.setAttribute('data-custom-datetime', '');
+              modal.keepContentsMounted = true;
+              const content = document.createElement('div');
+              const picker = document.createElement('ion-datetime');
+              picker.presentation = 'date';
+              picker.value = document.querySelector<HTMLIonDatetimeElement>('ion-datetime#datetime')!.value;
+              picker.showDefaultTitle = true;
+              picker.innerHTML =
+                '<span slot="title">Date</span><ion-buttons slot="buttons"><ion-button>Cancel</ion-button><ion-button>Apply</ion-button></ion-buttons>';
+              content.append(picker);
+              modal.append(content);
+              document.querySelector('ion-app')!.append(modal);
+            }
             await document.fonts.ready;
           },
-          { dark, folded: scenario.folded, customWidth: scenario.customWidth },
+          { dark, folded: scenario.folded, customWidth: scenario.customWidth, customOverlay: scenario.customOverlay },
         );
-        const modal = page.locator('ion-modal.ion-datetime-button-overlay');
+        const modal = page.locator(scenario.customOverlay ? 'ion-modal[data-custom-datetime]' : 'ion-modal.ion-datetime-button-overlay');
         await modal.evaluate((el) => {
           el.addEventListener('ionModalDidPresent', () => el.setAttribute('data-test-presented', 'true'), { once: true });
         });
-        await page.locator('ion-datetime-button button').first().click();
+        if (scenario.customOverlay) await modal.evaluate((el: HTMLIonModalElement) => el.present());
+        else await page.locator('ion-datetime-button button').first().click();
         await expect(modal).toHaveAttribute('data-test-presented', 'true');
         await expect(page).toHaveScreenshot(`datetime-modal-${scenario.name}${dark ? '-dark' : ''}.png`, { animations: 'disabled' });
       });

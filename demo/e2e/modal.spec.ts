@@ -92,6 +92,10 @@ for (const scenario of [
       height: scenario.modalHeight,
       top: scenario.height - scenario.modalHeight,
     });
+    // The sheet offset controls its height while its bottom stays at the viewport edge.
+    await modal.evaluate((el: HTMLElement) => el.style.setProperty('--ion-modal-offset-top', '80px'));
+    await expect.poll(bounds).toEqual({ width: scenario.modalWidth, height: scenario.height - 80, top: 80 });
+    await expect(modal.getByRole('dialog')).toHaveCSS('bottom', '0px');
   });
 }
 
