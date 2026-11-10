@@ -30,25 +30,28 @@ ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
 
   // Match the iPad form and page presentations without changing phone fullscreen modals.
   @media (min-width: 768px) and (min-height: 600px) {
-    --border-radius: 32px;
-    --width: 580px;
-    --height: min(660px, calc(100% - 64px));
-    --box-shadow: 0 24px 64px color-mix(in srgb, var(--ion-box-shadow-color, #000) 18%, transparent);
+    // Datetime Button overlays retain Ionic's content-based dimensions.
+    &:not(.ion-datetime-button-overlay) {
+      --border-radius: 32px;
+      --width: 580px;
+      --height: min(660px, calc(100% - 64px));
+      --box-shadow: 0 24px 64px color-mix(in srgb, var(--ion-box-shadow-color, #000) 18%, transparent);
 
-    &:not(.modal-card, .modal-sheet)::part(content) {
-      // Keep translucent headers from sampling the shadow outside the rounded surface.
-      clip-path: inset(0 round var(--border-radius));
-    }
+      &:not(.modal-card, .modal-sheet)::part(content) {
+        // Keep translucent headers from sampling the shadow outside the rounded surface.
+        clip-path: inset(0 round var(--border-radius));
+      }
 
-    &.modal-card {
-      --width: min(936px, calc(100% - 40px));
-      --max-width: 936px;
-      --height: calc(100% - max(32px, var(--ion-safe-area-top, 0px)) * 2);
-    }
+      &.modal-card {
+        --width: min(936px, calc(100% - 40px));
+        --max-width: 936px;
+        --height: calc(100% - max(32px, var(--ion-safe-area-top, 0px)) * 2);
+      }
 
-    &.modal-sheet {
-      --width: min(936px, calc(100vw - 40px));
-      --height: calc(100% - max(32px, var(--ion-modal-offset-top, 0px)));
+      &.modal-sheet {
+        --width: min(936px, calc(100vw - 40px));
+        --height: calc(100% - max(32px, var(--ion-modal-offset-top, 0px)));
+      }
     }
   }
 
@@ -92,7 +95,8 @@ ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
 
 // Foldable and vertical-bar layouts use the measured SwiftUI sheet bounds.
 // Keep ordinary phone and tablet defaults independent of these device layouts.
-:is(ion-app.ios-theme-vertical-bars, ion-app.ios-theme-fold-expanded) ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
+:is(ion-app.ios-theme-vertical-bars, ion-app.ios-theme-fold-expanded)
+  ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled, .ion-datetime-button-overlay) {
   &.modal-card,
   &.modal-sheet {
     --width: calc(100% - 16px);
