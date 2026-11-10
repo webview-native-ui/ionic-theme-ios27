@@ -1,5 +1,5 @@
 {
-  "originHash" : "88477bb79e14954532e45514db43b54f054282a540b4cde27508746a9cbe5d22",
+  "originHash" : "4e4e3e2f3dd22395278c48a90d8152439c15a282e3e553b62bbd1c7ddb5cc928",
   "pins" : [
     {
       "identity" : "capacitor-swift-pm",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/webview-native-ui/engine.git",
       "state" : {
-        "revision" : "309b06feac0fdb6de145ec6e09c2af1f24db73c2",
-        "version" : "1.0.2"
+        "revision" : "1ef951b989bad3ebf874173fa4174dcec97478ba",
+        "version" : "1.0.4"
       }
     }
   ],
