@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const openPicker = async (page: Page) => {
-  const modal = page.locator('ion-modal');
+  const modal = page.locator('ion-modal.ion-datetime-button-overlay');
   await modal.evaluate((el) => {
     el.addEventListener('ionModalDidPresent', () => el.setAttribute('data-test-presented', 'true'), { once: true });
   });
