@@ -31,7 +31,7 @@ ion-modal.ios:not(.ios-theme-disabled, .ios26-disabled) {
   // Match the iPad form and page presentations without changing phone fullscreen modals.
   @media (min-width: 768px) and (min-height: 600px) {
     // Datetime Button overlays retain Ionic's content-based dimensions.
-    &:not(.ion-datetime-button-overlay) {
+    &:where(:not(.ion-datetime-button-overlay)) {
       --border-radius: 32px;
       --width: 580px;
       --height: min(660px, calc(100% - 64px));
