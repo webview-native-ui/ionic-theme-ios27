@@ -9,13 +9,13 @@ Review every section newer than the version currently installed, in ascending or
 The optional setup section explains how to adopt the wrappers. Versioned sections
 document upgrade changes and compatibility guidance.
 
-## Optional: adopt the setup presets
+## Optional: simplify the setup
 
 Existing individual CSS paths and animation exports remain supported. You can
-adopt `ios26ThemeConfig` and a CSS preset when simplifying your setup. New
+adopt `ios26ThemeConfig` and a combined theme stylesheet when simplifying your setup. New
 applications can follow [Set up the theme](setup.md).
 
-Replace the manual theme and Ionic dark-palette imports with the preset matching
+Replace the manual theme and Ionic dark-palette imports with the stylesheet matching
 your current dark-mode policy. For a system-dark application, apply this change
 after Ionic's base CSS and before application overrides.
 
@@ -25,16 +25,16 @@ after Ionic's base CSS and before application overrides.
 - @import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css';
 - @import '@rdlabo/ionic-theme-ios26/dist/css/md-remove-ios-class-effect.css';
 - @import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-system.css';
-+ @import '@rdlabo/ionic-theme-ios26/preset/system.css';
++ @import '@rdlabo/ionic-theme-ios26/styles/system.css';
 ```
 
-For manual dark mode, use `preset/class.css` and retain your document root's
-`ion-palette-dark` toggle. For always-dark appearance, use `preset/always.css`.
-The preset includes the matching Ionic palette. Keep additional selective styles,
+For manual dark mode, use `styles/class.css` and retain your document root's
+`ion-palette-dark` toggle. For always-dark appearance, use `styles/always.css`.
+The stylesheet includes the matching Ionic palette. Keep additional selective styles,
 such as `md-ion-list-inset.css`, according to your application's existing needs.
 
-Replace the manually assembled configuration with a preset spread. This example
-keeps a concrete application option, `animated: false`, after the preset.
+Replace the manually assembled configuration with a configuration spread. This example
+keeps a concrete application option, `animated: false`, after the configuration.
 
 ```diff
 - import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
@@ -52,11 +52,11 @@ keeps a concrete application option, `animated: false`, after the preset.
 
 Pass the object to the same `provideIonicAngular`, `setupIonicReact`, or
 `app.use(IonicVue, ...)` call your application already uses. Properties after the
-spread take precedence over the preset, including custom animations and explicitly
+spread take precedence over the configuration, including custom animations and explicitly
 supplied `undefined` values. Keep your custom options after the spread.
 
-The preset sets `mode: 'ios'` and includes iOS animations. Preserve a platform-based
-mode policy by conditionally spreading the preset only for the effective iOS mode.
+The configuration sets `mode: 'ios'` and includes iOS animations. Preserve a platform-based
+mode policy by conditionally spreading the configuration only for the effective iOS mode.
 This example keeps the application's existing platform selection.
 
 ```diff
@@ -74,9 +74,9 @@ This example keeps the application's existing platform selection.
  };
 ```
 
-Changing `mode` after an unconditional preset spread retains its animation
-functions. Select the preset and mode together before Ionic initializes. Keep your
-existing dark-mode policy when choosing the CSS preset. For individual CSS and
+Changing `mode` after an unconditional configuration spread retains its animation
+functions. Select the configuration and mode together before Ionic initializes. Keep your
+existing dark-mode policy when choosing the combined theme stylesheet. For individual CSS and
 animation options and mixed-theme recipes, see [Configuration](configuration.md).
 
 ## Migrating to 9.2.0

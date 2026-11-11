@@ -1,7 +1,7 @@
 # Configure the iOS 26 theme
 
 Use these individual stylesheets and animation exports when customizing the theme.
-For the preset-based introduction, follow [Set up the theme](setup.md).
+For the short setup introduction, follow [Set up the theme](setup.md).
 
 ## Load styles individually
 
@@ -24,15 +24,15 @@ styles already.
 
 Pair one Ionic palette with the matching theme variant.
 
-| Policy      | Ionic palette under `@ionic/core/css/palettes/` | Theme under `dist/css/`             | Preset equivalent   |
+| Policy      | Ionic palette under `@ionic/core/css/palettes/` | Theme under `dist/css/`             | Combined stylesheet |
 | ----------- | ----------------------------------------------- | ----------------------------------- | ------------------- |
-| System      | `dark.system.css`                               | `ionic-theme-ios26-dark-system.css` | `preset/system.css` |
-| Manual      | `dark.class.css`                                | `ionic-theme-ios26-dark-class.css`  | `preset/class.css`  |
-| Always dark | `dark.always.css`                               | `ionic-theme-ios26-dark-always.css` | `preset/always.css` |
+| System      | `dark.system.css`                               | `ionic-theme-ios26-dark-system.css` | `styles/system.css` |
+| Manual      | `dark.class.css`                                | `ionic-theme-ios26-dark-class.css`  | `styles/class.css`  |
+| Always dark | `dark.always.css`                               | `ionic-theme-ios26-dark-always.css` | `styles/always.css` |
 
-Manual dark mode uses `ion-palette-dark` on `document.documentElement`. Each preset
+Manual dark mode uses `ion-palette-dark` on `document.documentElement`. Each combined stylesheet
 includes its matching Ionic palette and all five imports shown above. Replace the
-corresponding individual imports when adopting a preset.
+corresponding individual imports when adopting a combined stylesheet.
 
 ## Configure animations individually
 
@@ -63,7 +63,7 @@ framework's existing initializer.
 | React             | `setupIonicReact(ionicConfig)`     | `@ionic/react`              |
 | Vue               | `app.use(IonicVue, ionicConfig)`   | `@ionic/vue`                |
 
-## Preset options and customization
+## Theme configuration and customization
 
 `ios26ThemeConfig` is a typed Ionic configuration object containing `mode: 'ios'`
 and the iOS navigation and popover animations. Spread it into your Ionic options,
@@ -80,12 +80,12 @@ const ionicConfig = {
 
 Properties after the spread take precedence, including custom `navAnimation`,
 `popoverEnter`, and `popoverLeave` functions. An explicit `undefined` property also
-overrides the preset value through normal JavaScript object spread semantics.
+overrides the configuration value through normal JavaScript object spread semantics.
 The object reads no browser globals and can be imported in a server-rendered app.
 
-For platform-based mode selection, spread the preset only when the effective mode
+For platform-based mode selection, spread the configuration only when the effective mode
 is iOS. Changing `mode` alone keeps the spread animation functions, so choose the
-preset and mode together before initializing Ionic.
+configuration and mode together before initializing Ionic.
 
 ```ts
 import { isPlatform, type IonicConfig } from '@ionic/core';
@@ -99,7 +99,7 @@ const ionicConfig: IonicConfig = {
 };
 ```
 
-For replacing an existing manual setup, see [Optional preset adoption](migration.md#optional-adopt-the-setup-presets).
+For replacing an existing manual setup, see [Optional wrapper adoption](migration.md#optional-simplify-the-setup).
 
 ## Optional: use the iOS 26 and MD3 themes together
 

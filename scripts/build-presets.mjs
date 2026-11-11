@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 
@@ -9,9 +9,10 @@ const base = await Promise.all(
   ['default-variables', 'ionic-theme-ios26', 'md-remove-ios-class-effect'].map((name) => readCss(`dist/css/${name}.css`)),
 );
 
-await mkdir('dist/preset', { recursive: true });
+await rm('dist/preset', { recursive: true, force: true });
+await mkdir('dist/styles', { recursive: true });
 for (const mode of ['system', 'class', 'always']) {
   const palette = await readCss(require.resolve(`@ionic/core/css/palettes/dark.${mode}.css`));
   const dark = await readCss(`dist/css/ionic-theme-ios26-dark-${mode}.css`);
-  await writeFile(`dist/preset/${mode}.css`, [`/*! @ionic/core palette\n${ionicLicense} */`, palette, ...base, dark, ''].join('\n'));
+  await writeFile(`dist/styles/${mode}.css`, [`/*! @ionic/core palette\n${ionicLicense} */`, palette, ...base, dark, ''].join('\n'));
 }

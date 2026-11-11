@@ -8,19 +8,19 @@ Use an existing Ionic Angular, React, or Vue application with `@ionic/core >=8.8
 npm install @rdlabo/ionic-theme-ios26
 ```
 
-## 2. Load one preset
+## 2. Load one stylesheet
 
 After Ionic's base styles, add this import to your global stylesheet.
 
 ```css
-@import '@rdlabo/ionic-theme-ios26/preset/system.css';
+@import '@rdlabo/ionic-theme-ios26/styles/system.css';
 ```
 
-The preset supplies the theme variables, component styles, Material Design
+The stylesheet supplies the theme variables, component styles, Material Design
 compatibility styles, Ionic system-dark palette, and matching theme dark styles.
-Use `preset/class.css` for manual dark mode through the `ion-palette-dark` class
-on the document root, or `preset/always.css` for always-dark appearance. Choose the
-preset matching your application's dark-mode policy and replace the corresponding
+Use `styles/class.css` for manual dark mode through the `ion-palette-dark` class
+on the document root, or `styles/always.css` for always-dark appearance. Choose the
+stylesheet matching your application's dark-mode policy and replace the corresponding
 existing theme and Ionic dark-palette imports.
 
 ## 3. Configure Ionic
@@ -66,10 +66,10 @@ app.use(IonicVue, {
 });
 ```
 
-The preset sets `mode: 'ios'`, so the theme also appears in desktop previews.
+The configuration sets `mode: 'ios'`, so the theme also appears in desktop previews.
 Add your Ionic options after the spread to override defaults. If your application
-selects modes by platform, conditionally spread the preset only in iOS mode. See
-[Configuration](configuration.md#preset-options-and-customization) for an example.
+selects modes by platform, conditionally spread the configuration only in iOS mode. See
+[Configuration](configuration.md#theme-configuration-and-customization) for an example.
 
 ## 4. Preview
 
@@ -88,5 +88,5 @@ this markup inside its `ion-content`, using your framework's component syntax.
 Check the rounded inset groups, navigate between pages, and check the selected
 dark-mode policy. Read [Using ion-item-group](using-ion-item-group.md) for list
 structure. [Configuration](configuration.md) covers individual CSS imports and
-animation options. [Migration](migration.md) covers adopting presets in an
+animation options. [Migration](migration.md) covers adopting the wrappers in an
 existing application and version-specific upgrades.

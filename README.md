@@ -16,14 +16,14 @@ DEMO is here: https://ionic-theme-ios26.rdlabo.dev/
 npm install @rdlabo/ionic-theme-ios26
 ```
 
-After Ionic's base CSS, add the system-dark preset to your global stylesheet.
+After Ionic's base CSS, add the system-dark stylesheet to your global stylesheet.
 
 ```css
-@import '@rdlabo/ionic-theme-ios26/preset/system.css';
+@import '@rdlabo/ionic-theme-ios26/styles/system.css';
 ```
 
 Spread `ios26ThemeConfig` into your existing Ionic initializer's options. The
-preset supplies iOS mode and theme animations.
+configuration supplies iOS mode and theme animations.
 
 ```ts
 import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
@@ -47,7 +47,7 @@ Existing applications can adopt the wrappers using [Migration](docs/migration.md
 - [Features](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/features) — CSS variables, Liquid Glass, selective imports, and dark mode.
 - [Experimental Animation](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/experimental-animation) — tab bar and searchable effects.
 - [iOS 18](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/ios-18) — load the theme only on iOS 26.
-- [Migration](docs/migration.md) — optional preset adoption and version-specific upgrade steps.
+- [Migration](docs/migration.md) — optional wrapper adoption and version-specific upgrade steps.
 
 <!-- rdlabo-docs-omit -->
 

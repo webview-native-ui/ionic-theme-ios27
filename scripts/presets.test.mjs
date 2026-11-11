@@ -17,7 +17,7 @@ test('exports iOS defaults that can be imported without a DOM', () => {
   });
 });
 
-test('spread options override defaults without mutating the preset', () => {
+test('spread options override defaults without mutating the configuration', () => {
   const original = { ...ios26ThemeConfig };
   const navAnimation = () => {};
   const config = { ...ios26ThemeConfig, navAnimation, animated: false };
@@ -32,14 +32,14 @@ test('explicit undefined options retain normal object spread semantics', () => {
   assert.equal(config.popoverEnter, undefined);
 });
 
-test('applications can select the preset only for iOS mode', () => {
+test('applications can select the configuration only for iOS mode', () => {
   const configForMode = (mode) => ({ ...(mode === 'ios' ? ios26ThemeConfig : {}), mode });
   assert.deepEqual(configForMode('ios'), ios26ThemeConfig);
   assert.deepEqual(configForMode('md'), { mode: 'md' });
 });
 
 for (const mode of ['system', 'class', 'always']) {
-  test(`${mode} preset export contains the matching palette and theme in order`, async () => {
+  test(`${mode} stylesheet export contains the matching palette and theme in order`, async () => {
     const sourcePaths = [
       require.resolve(`@ionic/core/css/palettes/dark.${mode}.css`),
       ...['default-variables', 'ionic-theme-ios26', 'md-remove-ios-class-effect', `ionic-theme-ios26-dark-${mode}`].map(
@@ -48,7 +48,7 @@ for (const mode of ['system', 'class', 'always']) {
     ];
     const ionicLicense = await readFile(join(dirname(require.resolve('@ionic/core/package.json')), 'LICENSE'), 'utf8');
     const expected = `/*! @ionic/core palette\n${ionicLicense} */\n${(await Promise.all(sourcePaths.map(readCss))).join('\n')}\n`;
-    const exportedPath = require.resolve(`@rdlabo/ionic-theme-ios26/preset/${mode}.css`);
+    const exportedPath = require.resolve(`@rdlabo/ionic-theme-ios26/styles/${mode}.css`);
     assert.equal(await readFile(exportedPath, 'utf8'), expected);
     assert.doesNotMatch(expected, /@import\b/);
   });
