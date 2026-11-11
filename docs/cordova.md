@@ -51,7 +51,7 @@ const ionicConfig = {
 };
 ```
 
-Use your framework's existing initializer as described in [Configure Ionic animations](setup.md#3-configure-ionic-animations); do not initialize Ionic twice. To retain Material Design mode on Android, apply these options only to your iOS configuration. Other helpers such as `attachTabBarSearchable` are also available from `/theme`; importing them does not automatically attach their behavior.
+Use your framework's existing initializer as described in [framework initialization](setup.md#3-pass-theme-configuration-to-ionic); do not initialize Ionic twice. To retain Material Design mode on Android, apply these options only to your iOS configuration. Other helpers such as `attachTabBarSearchable` are also available from `/theme`; importing them does not automatically attach their behavior.
 
 ## 4. Start Native UI after Cordova and the app are ready
 

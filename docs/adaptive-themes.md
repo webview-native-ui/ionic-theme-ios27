@@ -52,7 +52,7 @@ The checks select browser capabilities, not iOS versions:
 | `text-wrap: pretty`, without `overflow-anchor: auto` | iOS 26 theme.                   |
 | Neither feature                                      | Ionic's default iOS appearance. |
 
-The example uses class-based dark mode: also load [Ionic's matching dark palette](https://ionicframework.com/docs/theming/dark-mode). For system or always-dark mode, replace both `-dark-class` imports with the matching variant; see the [dark-mode pairs](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/setup#choose-one-dark-mode-pair). The `md-remove-ios-class-effect` styles prevent iOS-specific classes from affecting Material Design mode.
+The example uses class-based dark mode: also load [Ionic's matching dark palette](https://ionicframework.com/docs/theming/dark-mode). For system or always-dark mode, replace both `-dark-class` imports with the matching variant; see the [dark-mode pairs](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/configuration#dark-mode). The `md-remove-ios-class-effect` styles prevent iOS-specific classes from affecting Material Design mode.
 
 ## 3. Configure animations
 
