@@ -5,19 +5,18 @@ import test from 'node:test';
 import { ios27ThemeConfig, iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '../dist/index.js';
 
 test('theme defaults are available without browser globals', () => {
-  assert.deepEqual(ios27ThemeConfig(), {
+  assert.deepEqual(ios27ThemeConfig, {
     mode: 'ios',
     navAnimation: iosTransitionAnimation,
     popoverEnter: popoverEnterAnimation,
     popoverLeave: popoverLeaveAnimation,
   });
-  assert.equal(ios27ThemeConfig({ mode: undefined }).mode, 'ios');
 });
 
 test('application options override defaults without mutating their object', () => {
   const animation = () => {};
   const existing = { navAnimation: animation, popoverEnter: undefined, animated: false };
-  const result = ios27ThemeConfig(existing);
+  const result = { ...ios27ThemeConfig, ...existing };
   assert.equal(result.navAnimation, animation);
   assert.equal(result.popoverEnter, undefined);
   assert.equal(result.animated, false);
@@ -25,10 +24,11 @@ test('application options override defaults without mutating their object', () =
   assert.notEqual(result, existing);
 });
 
-test('Material mode preserves Ionic defaults and explicit application options', () => {
-  assert.deepEqual(ios27ThemeConfig({ mode: 'md' }), { mode: 'md' });
-  const animation = () => {};
-  assert.deepEqual(ios27ThemeConfig({ mode: 'md', navAnimation: animation }), { mode: 'md', navAnimation: animation });
+test('application spread options control mode and leave the preset unchanged', () => {
+  assert.equal({ ...ios27ThemeConfig, mode: 'md' }.mode, 'md');
+  assert.equal({ ...ios27ThemeConfig, mode: undefined }.mode, undefined);
+  assert.equal(ios27ThemeConfig.mode, 'ios');
+  assert.equal(ios27ThemeConfig.navAnimation, iosTransitionAnimation);
 });
 
 const require = createRequire(import.meta.url);

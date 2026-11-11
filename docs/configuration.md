@@ -1,6 +1,6 @@
 # Configure the iOS 27 theme
 
-The [setup guide](setup.md) uses one preset stylesheet and `ios27ThemeConfig()`. This guide describes their defaults, application overrides and the individual CSS and animation APIs. Existing applications can adopt the presets using the [optional migration](migration.md#optional-adopt-the-setup-presets).
+The [setup guide](setup.md) uses one preset stylesheet and `ios27ThemeConfig`. This guide describes their defaults, application overrides and the individual CSS and animation APIs. Existing applications can adopt the presets using the [optional migration](migration.md#optional-adopt-the-setup-presets).
 
 ## Dark mode
 
@@ -44,35 +44,37 @@ The compatibility stylesheet prevents iOS-specific utility classes from affectin
 
 ## Configuration defaults and overrides
 
-`ios27ThemeConfig(existingOptions)` returns a new Ionic configuration synchronously. It defaults an omitted or `undefined` mode to `ios` and supplies `iosTransitionAnimation`, `popoverEnterAnimation` and `popoverLeaveAnimation` when the effective mode is `ios`. Existing application animation options override these defaults, including an explicit `undefined` value. Other Ionic options are copied to the result.
+`ios27ThemeConfig` is a typed Ionic configuration object with `mode: 'ios'`, `iosTransitionAnimation`, `popoverEnterAnimation` and `popoverLeaveAnimation`. Spread it into the application's Ionic configuration before rendering. Properties added after the spread override the corresponding preset values, including explicit `undefined` values.
 
 ```ts
 import { ios27ThemeConfig } from '@rdlabo/ionic-theme-ios27';
 
-const ionicConfig = ios27ThemeConfig({
-  ...existingIonicConfig,
-  navAnimation: customNavigationAnimation,
-  popoverEnter: undefined,
-});
+const ionicConfig = {
+  ...ios27ThemeConfig,
+  animated: false, // Application preference overrides Ionic's default.
+  popoverEnter: undefined, // Use Ionic's default popover enter animation.
+};
 ```
 
-Pass this result to the application's existing Ionic initializer before rendering. Use `provideIonicAngular`, `setupIonicReact` or `app.use(IonicVue, ionicConfig)` according to the framework. The [setup guide](setup.md#3-pass-theme-configuration-to-ionic) lists the framework imports.
+A custom transition can replace `navAnimation` after the spread using the application's animation function. Create a new configuration object for application options, so other users of the shared preset retain its defaults.
+
+Pass this object to the application's existing Ionic initializer. Use `provideIonicAngular`, `setupIonicReact` or `app.use(IonicVue, ionicConfig)` according to the framework. The [setup guide](setup.md#3-pass-theme-configuration-to-ionic) lists the framework imports.
 
 ### Preserve platform-based mode selection
 
-An application that previously allowed Ionic to select its mode by platform should pass its selected mode explicitly when adopting the wrapper.
+The preset contains iOS mode and iOS animations. An application that selects its appearance by platform should select the whole configuration before Ionic initializes. For example, this application uses the iOS 27 theme on iOS and Ionic's Material Design defaults elsewhere.
 
 ```ts
 import { isPlatform } from '@ionic/core';
 import { ios27ThemeConfig } from '@rdlabo/ionic-theme-ios27';
 
-const ionicConfig = ios27ThemeConfig({
-  ...existingIonicConfig,
-  mode: existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md'),
-});
+const ionicConfig = {
+  ...(isPlatform('ios') ? ios27ThemeConfig : { mode: 'md' as const }),
+  animated: false, // Optional application setting, applied on both platforms.
+};
 ```
 
-An explicit `md` mode receives the application's supplied options without iOS animation defaults. Use the application's existing mode-selection function when its platform policy differs from this example. The selection must run before Ionic initializes.
+Use the application's existing mode-selection policy when it differs from this example. Changing only `mode` after spreading the preset retains its iOS animation properties. Select the appropriate configuration as a whole when both mode and animations should change. Browser-capability conditions and multi-theme selection can keep their [adaptive configuration](adaptive-themes.md).
 
 ## Wire animations individually
 
@@ -86,7 +88,7 @@ const ionicConfig = {
   navAnimation: iosTransitionAnimation,
   popoverEnter: popoverEnterAnimation,
   popoverLeave: popoverLeaveAnimation,
-  ...existingIonicConfig,
+  // animated: false,
 };
 ```
 

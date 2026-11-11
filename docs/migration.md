@@ -8,7 +8,7 @@ This guide upgrades the standalone theme and its Capacitor integration. To adopt
 
 ## Optional: adopt the setup presets
 
-The preset CSS and `ios27ThemeConfig()` are additive convenience APIs. Adoption is optional, and existing individual CSS paths and animation exports remain supported. Follow [setup](setup.md) for a new application and [configuration](configuration.md) for the individual settings.
+The preset CSS and `ios27ThemeConfig` are additive convenience APIs. Adoption is optional, and existing individual CSS paths and animation exports remain supported. Follow [setup](setup.md) for a new application and [configuration](configuration.md) for the individual settings.
 
 ### Replace the matching stylesheet group
 
@@ -27,38 +27,47 @@ Use `preset/system.css` for existing system dark mode and `preset/always.css` fo
 
 ### Replace animation defaults and preserve application options
 
-Replace the manually assembled animation defaults with the wrapper. Pass the selected mode explicitly to preserve the application's existing platform-based mode selection.
+Replace the manually assembled animation defaults with the configuration spread. Keep concrete application settings after the spread so they take precedence.
 
 ```diff
- import { isPlatform } from '@ionic/core';
 - import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios27';
 + import { ios27ThemeConfig } from '@rdlabo/ionic-theme-ios27';
 
-- const ionicConfig = {
--   navAnimation: isPlatform('ios') ? iosTransitionAnimation : undefined,
--   popoverEnter: isPlatform('ios') ? popoverEnterAnimation : undefined,
--   popoverLeave: isPlatform('ios') ? popoverLeaveAnimation : undefined,
-+ const ionicConfig = ios27ThemeConfig({
-   ...existingIonicConfig,
-- };
-+   mode: existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md'),
-+ });
+ const ionicConfig = {
+-   mode: 'ios' as const,
+-   navAnimation: iosTransitionAnimation,
+-   popoverEnter: popoverEnterAnimation,
+-   popoverLeave: popoverLeaveAnimation,
++   ...ios27ThemeConfig,
+   animated: false, // Keep this application's reduced-motion setting.
+ };
 ```
 
-Keep the application's own mode-selection function if it uses a different policy. Without an explicit mode, the wrapper defaults to `ios`, including desktop and Android. An explicit `md` mode receives no iOS animation defaults. Keep the existing framework initializer and pass it the returned configuration before rendering.
-
-Pass application options before adding theme defaults through the wrapper. Custom animations and explicit `undefined` animation values take precedence.
+The preset supplies iOS mode on every platform. If the app previously selected mode by platform, select the configuration as a whole before spreading it. This retains Ionic's Material Design defaults outside iOS.
 
 ```ts
-const ionicConfig = ios27ThemeConfig({
-  ...existingIonicConfig,
-  mode: selectedMode,
-  navAnimation: customNavigationAnimation,
-  popoverEnter: undefined,
-});
+import { isPlatform } from '@ionic/core';
+import { ios27ThemeConfig } from '@rdlabo/ionic-theme-ios27';
+
+const ionicConfig = {
+  ...(isPlatform('ios') ? ios27ThemeConfig : { mode: 'md' as const }),
+  animated: false, // Optional application preference on both platforms.
+};
 ```
 
-When replacing a previously assembled configuration, remove the old theme-default animation assignments from that configuration if you want the wrapper to supply them. An existing property set to `undefined` deliberately suppresses that animation default. Browser-capability conditions and multi-theme selection can keep their existing [adaptive configuration](adaptive-themes.md).
+Use the application's own mode-selection function if it uses a different policy. Changing only `mode` after spreading the preset retains the preset's animation properties. Keep the existing framework initializer and pass it the assembled configuration before rendering.
+
+Custom animations and explicit `undefined` animation values can also be supplied after the spread. For example, this configuration leaves popover enter animation selection to Ionic.
+
+```ts
+const ionicConfig = {
+  ...ios27ThemeConfig,
+  popoverEnter: undefined, // Use Ionic's default enter animation.
+  // navAnimation: myNavigationAnimation, // Your application's custom transition.
+};
+```
+
+When adopting the preset, replace the old theme-default assignments with the spread. Keep intentional application overrides after it. Browser-capability conditions and multi-theme selection can keep their existing [adaptive configuration](adaptive-themes.md).
 
 After adoption, check the same modes and light/dark states your application previously supported, then verify navigation and popovers. Device layout and Native UI startup continue to use their respective APIs.
 
@@ -136,7 +145,7 @@ Add the native package as a direct application dependency, update imports, rebui
 
 ## Device layout in 2.0
 
-For device placement and posture support, install Foldable alongside the theme:
+Install Foldable alongside the theme as part of the standard setup:
 
 ```sh
 npm install @rdlabo/ionic-theme-ios27 @erkamyaman/capacitor-foldable
