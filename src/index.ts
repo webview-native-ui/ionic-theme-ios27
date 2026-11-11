@@ -7,3 +7,5 @@ export * from './transition/ios.transition';
 export { registerSegmentEffect } from './segment';
 
 export { registerTabBarEffect } from './tab-bar';
+
+export { ios26ThemeConfig } from './preset';

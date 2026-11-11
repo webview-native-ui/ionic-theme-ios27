@@ -6,7 +6,78 @@ title: Migration
 
 Review every section newer than the version currently installed, in ascending order. For example, when upgrading from 1.x to 9.0.0, complete the 2.0.0 and 3.0.0 migration steps before reviewing 9.0.0.
 
-Each section lists only the changes that require application code or configuration updates.
+The optional setup section explains how to adopt the wrappers. Versioned sections
+document upgrade changes and compatibility guidance.
+
+## Optional: simplify the setup
+
+Existing individual CSS paths and animation exports remain supported. You can
+adopt `ios26ThemeConfig` and a combined theme stylesheet when simplifying your setup. New
+applications can follow [Set up the theme](setup.md).
+
+Replace the manual theme and Ionic dark-palette imports with the stylesheet matching
+your current dark-mode policy. For a system-dark application, apply this change
+after Ionic's base CSS and before application overrides.
+
+```diff
+- @import '@ionic/core/css/palettes/dark.system.css';
+- @import '@rdlabo/ionic-theme-ios26/dist/css/default-variables.css';
+- @import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css';
+- @import '@rdlabo/ionic-theme-ios26/dist/css/md-remove-ios-class-effect.css';
+- @import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-system.css';
++ @import '@rdlabo/ionic-theme-ios26/styles/system.css';
+```
+
+For manual dark mode, use `styles/class.css` and retain your document root's
+`ion-palette-dark` toggle. For always-dark appearance, use `styles/always.css`.
+The stylesheet includes the matching Ionic palette. Keep additional selective styles,
+such as `md-ion-list-inset.css`, according to your application's existing needs.
+
+Replace the manually assembled configuration with a configuration spread. This example
+keeps a concrete application option, `animated: false`, after the configuration.
+
+```diff
+- import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
++ import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
+
+ const ionicConfig = {
+-   mode: 'ios',
+-   navAnimation: iosTransitionAnimation,
+-   popoverEnter: popoverEnterAnimation,
+-   popoverLeave: popoverLeaveAnimation,
++   ...ios26ThemeConfig,
+   animated: false,
+ };
+```
+
+Pass the object to the same `provideIonicAngular`, `setupIonicReact`, or
+`app.use(IonicVue, ...)` call your application already uses. Properties after the
+spread take precedence over the configuration, including custom animations and explicitly
+supplied `undefined` values. Keep your custom options after the spread.
+
+The configuration sets `mode: 'ios'` and includes iOS animations. Preserve a platform-based
+mode policy by conditionally spreading the configuration only for the effective iOS mode.
+This example keeps the application's existing platform selection.
+
+```diff
+ import { isPlatform, type IonicConfig } from '@ionic/core';
+- import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
++ import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
+
+ const mode = isPlatform('ios') ? 'ios' : 'md';
+ const ionicConfig: IonicConfig = {
+-   ...(mode === 'ios'
+-     ? { navAnimation: iosTransitionAnimation, popoverEnter: popoverEnterAnimation, popoverLeave: popoverLeaveAnimation }
+-     : {}),
++   ...(mode === 'ios' ? ios26ThemeConfig : {}),
+   mode,
+ };
+```
+
+Changing `mode` after an unconditional configuration spread retains its animation
+functions. Select the configuration and mode together before Ionic initializes. Keep your
+existing dark-mode policy when choosing the combined theme stylesheet. For individual CSS and
+animation options and mixed-theme recipes, see [Configuration](configuration.md).
 
 ## Migrating to 9.2.0
 
@@ -14,11 +85,11 @@ Each section lists only the changes that require application code or configurati
 
 The theme opt-out class and CSS variables have been renamed to remove the OS version from their public names. The old names are deprecated; use the new names in new code and migrate existing customizations when convenient.
 
-| Deprecated name | New name |
-| --- | --- |
-| `ios26-disabled` | `ios-theme-disabled` |
-| `--ios26-content-box-shadow-rgb` | `--ios-theme-content-box-shadow-rgb` |
-| `--ios26-*` (other theme variables) | `--ios-theme-*` (same suffix) |
+| Deprecated name                     | New name                             |
+| ----------------------------------- | ------------------------------------ |
+| `ios26-disabled`                    | `ios-theme-disabled`                 |
+| `--ios26-content-box-shadow-rgb`    | `--ios-theme-content-box-shadow-rgb` |
+| `--ios26-*` (other theme variables) | `--ios-theme-*` (same suffix)        |
 
 ```diff
 - <ion-button class="ios26-disabled">Standard Ionic button</ion-button>

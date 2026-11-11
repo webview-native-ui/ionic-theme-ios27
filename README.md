@@ -12,148 +12,32 @@ DEMO is here: https://ionic-theme-ios26.rdlabo.dev/
 
 ## Installation
 
-In an existing Ionic project:
-
-```bash
+```sh
 npm install @rdlabo/ionic-theme-ios26
 ```
 
-Note: **If you use @ionic/core@ < 8.8.1**, use @rdlabo/ionic-theme-ios26@2.2.1.
-
-And import the theme in your project's main CSS file (e.g., `src/styles.scss`).
+After Ionic's base CSS, add the system-dark stylesheet to your global stylesheet.
 
 ```css
-@import '@rdlabo/ionic-theme-ios26/dist/css/default-variables.css';
-@import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css';
-
-/**
- * This file is to eliminate the impact of class name changes for iOS26.
- * For example, `ion-buttons ion-button[fill=default]` is not normally implemented, but may be required for iOS26.
- * This file is to eliminate such effects.
- * Note: This stylesheet is not included in `@rdlabo/ionic-theme-md3`.
- */
-@import '@rdlabo/ionic-theme-ios26/dist/css/md-remove-ios-class-effect.css';
-
-/**
- * If you will use the design of ion-item-group with ion-list on Android as well, import it.
- * More info: https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/using-ion-item-group
- * Note: This stylesheet is included in `@rdlabo/ionic-theme-md3`.
- * @import '@rdlabo/ionic-theme-ios26/dist/css/md-ion-list-inset.css';
- */
-
-/*
- * Support Dark Mode
- * We support Ionic Dark Mode. More information is here: https://ionicframework.com/docs/theming/dark-mode
- * use Always:    @import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-always.css'
- * use System:    @import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-system.css'
- * use CSS Class: @import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-class.css'
- */
+@import '@rdlabo/ionic-theme-ios26/styles/system.css';
 ```
 
-### Configure animations
-
-If you installed only the iOS 26 theme, configure its animations as follows.
+Spread `ios26ThemeConfig` into your existing Ionic initializer's options. The
+configuration supplies iOS mode and theme animations.
 
 ```ts
-import { isPlatform } from '@ionic/core'; // or @ionic/angular (Ionic 9), @ionic/angular/standalone (Ionic 8), @ionic/react, @ionic/vue
-import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
+import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
 
-// Angular
-provideIonicAngular({
-    ...
-    navAnimation: isPlatform('ios') ? iosTransitionAnimation: undefined,
-    popoverEnter: isPlatform('ios') ? popoverEnterAnimation: undefined,
-    popoverLeave: isPlatform('ios') ? popoverLeaveAnimation: undefined,
-});
-
-// React
-setupIonicReact({
-    ...
-    navAnimation: isPlatform('ios') ? iosTransitionAnimation: undefined,
-    popoverEnter: isPlatform('ios') ? popoverEnterAnimation: undefined,
-    popoverLeave: isPlatform('ios') ? popoverLeaveAnimation: undefined,
-});
-
-// Vue
-createApp(App)
-    .use(IonicVue, {
-        ...
-        navAnimation: isPlatform('ios') ? iosTransitionAnimation: undefined,
-        popoverEnter: isPlatform('ios') ? popoverEnterAnimation: undefined,
-        popoverLeave: isPlatform('ios') ? popoverLeaveAnimation: undefined,
-})
+const ionicConfig = {
+  ...ios26ThemeConfig,
+  // animated: false,
+};
 ```
 
-### Check the theme
-
-Test on iOS. When previewing on desktop, set Ionic mode to `ios` in your existing framework initialization config (for example `mode: 'ios'`).
-
-Use this markup to preview the inset grouped list look. For the list structure the theme expects, see [Using ion-item-group](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/using-ion-item-group).
-
-```html
-<ion-list mode="ios" inset="true">
-  <ion-item-group>
-    <ion-item><ion-label>Notifications</ion-label></ion-item>
-    <ion-item><ion-label>Appearance</ion-label></ion-item>
-  </ion-item-group>
-</ion-list>
-```
-
-### Optional: use the iOS 26 and MD3 themes together
-
-Install the MD3 theme to style both Ionic modes from the same application.
-
-The current releases of both themes require `@ionic/core` 8.8.1 or later.
-
-```bash
-npm install @rdlabo/ionic-theme-md3
-```
-
-When your global stylesheet uses Sass, initialize the themes in this order:
-
-```scss
-@use '@rdlabo/ionic-theme-ios26/src/styles/default-variables.scss' as ios26-vars;
-@use '@rdlabo/ionic-theme-ios26/src/styles/ionic-theme-ios26.scss';
-@use '@rdlabo/ionic-theme-ios26/src/styles/ionic-theme-ios26-dark-class.scss';
-@use '@rdlabo/ionic-theme-ios26/src/styles/md-remove-ios-class-effect.scss';
-@use '@rdlabo/ionic-theme-md3/dist/css/default-variables.css' as md3-vars;
-@use '@rdlabo/ionic-theme-md3/dist/css/ionic-theme-md3.css';
-```
-
-The example uses Ionic's class-based dark mode. Your global stylesheet must also load Ionic's matching dark palette, such as `@ionic/angular/css/palettes/dark.class.css` for Angular. When using `dark-system` or `dark-always`, select the same variant for both Ionic's palette and the iOS 26 theme. See Ionic's [Dark Mode documentation](https://ionicframework.com/docs/theming/dark-mode). The explicit `ios26-vars` and `md3-vars` namespaces prevent the two variable modules from using the same default namespace.
-
-Configure both transition implementations when both themes are installed:
-
-```ts
-import { isPlatform } from '@ionic/core'; // or @ionic/angular (Ionic 9), @ionic/angular/standalone (Ionic 8), @ionic/react, @ionic/vue
-import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
-import { mdTransitionAnimation } from '@rdlabo/ionic-theme-md3';
-
-// Angular
-provideIonicAngular({
-    ...
-    navAnimation: isPlatform('ios') ? iosTransitionAnimation : mdTransitionAnimation,
-    popoverEnter: isPlatform('ios') ? popoverEnterAnimation : undefined,
-    popoverLeave: isPlatform('ios') ? popoverLeaveAnimation : undefined,
-});
-
-// React
-setupIonicReact({
-    ...
-    navAnimation: isPlatform('ios') ? iosTransitionAnimation : mdTransitionAnimation,
-    popoverEnter: isPlatform('ios') ? popoverEnterAnimation : undefined,
-    popoverLeave: isPlatform('ios') ? popoverLeaveAnimation : undefined,
-});
-
-// Vue
-createApp(App)
-    .use(IonicVue, {
-        ...
-        navAnimation: isPlatform('ios') ? iosTransitionAnimation : mdTransitionAnimation,
-        popoverEnter: isPlatform('ios') ? popoverEnterAnimation : undefined,
-        popoverLeave: isPlatform('ios') ? popoverLeaveAnimation : undefined,
-    });
-```
+Follow [Set up the theme](docs/setup.md) for Angular, React, and Vue examples,
+dark-mode selection, and a preview. Use [Configuration](docs/configuration.md)
+for individual CSS and animation exports, custom options, and iOS 26 with MD3.
+Existing applications can adopt the wrappers using [Migration](docs/migration.md).
 
 ## Documentation
 
@@ -163,7 +47,7 @@ createApp(App)
 - [Features](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/features) — CSS variables, Liquid Glass, selective imports, and dark mode.
 - [Experimental Animation](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/experimental-animation) — tab bar and searchable effects.
 - [iOS 18](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/ios-18) — load the theme only on iOS 26.
-- [Migration](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/migration) — required changes when upgrading major versions.
+- [Migration](docs/migration.md) — optional wrapper adoption and version-specific upgrade steps.
 
 <!-- rdlabo-docs-omit -->
 
