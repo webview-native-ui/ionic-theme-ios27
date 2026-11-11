@@ -1,0 +1,84 @@
+# Set up the iOS 26 theme
+
+Use an existing Ionic Angular, React, or Vue application with `@ionic/core >=8.8.1 <10`.
+
+## 1. Install
+
+```sh
+npm install @rdlabo/ionic-theme-ios26
+```
+
+## 2. Load one preset
+
+After Ionic's base styles, add this import to your global stylesheet.
+
+```css
+@import '@rdlabo/ionic-theme-ios26/preset/system.css';
+```
+
+The preset supplies the theme variables, component styles, Material Design
+compatibility styles, Ionic system-dark palette, and matching theme dark styles.
+Use `preset/class.css` for manual dark mode through the `ion-palette-dark` class
+on the document root, or `preset/always.css` for always-dark appearance. Choose the
+preset matching your application's dark-mode policy and replace the corresponding
+existing theme and Ionic dark-palette imports.
+
+## 3. Configure Ionic
+
+Pass `ios26ThemeConfig()` to your existing framework initializer before rendering.
+Use the example for your framework.
+
+Angular with Ionic 9 imports `provideIonicAngular` from `@ionic/angular`.
+With Ionic 8, use `@ionic/angular/standalone` for that import.
+
+```ts
+import { provideIonicAngular } from '@ionic/angular';
+import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
+
+// In the application's existing providers array
+provideIonicAngular(ios26ThemeConfig());
+```
+
+For React:
+
+```ts
+import { setupIonicReact } from '@ionic/react';
+import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
+
+setupIonicReact(ios26ThemeConfig());
+```
+
+For Vue, use the application's existing Vue app:
+
+```ts
+import { IonicVue } from '@ionic/vue';
+import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
+
+app.use(IonicVue, ios26ThemeConfig());
+```
+
+The helper defaults to `mode: 'ios'`, so the theme also appears in desktop
+previews. Pass your existing options as `ios26ThemeConfig(existingIonicConfig)`
+to retain custom options and animations. If the application selects modes by
+platform, pass the resolved mode to preserve that policy. See
+[Configuration](configuration.md#preset-options-and-customization) for the example.
+
+## 4. Preview
+
+Start your application's usual development server and open an existing page. Add
+this markup inside its `ion-content`, using your framework's component syntax.
+
+```html
+<ion-list inset="true">
+  <ion-item-group>
+    <ion-item><ion-label>Notifications</ion-label></ion-item>
+    <ion-item><ion-label>Appearance</ion-label></ion-item>
+  </ion-item-group>
+</ion-list>
+```
+
+Check the rounded inset groups, navigate between pages, and check the selected
+dark-mode policy. Read [Using ion-item-group](using-ion-item-group.md) for list
+structure. [Configuration](configuration.md) covers individual CSS imports and
+animation options. [Migration](migration.md) covers adopting presets in an
+existing application and version-specific upgrades.
