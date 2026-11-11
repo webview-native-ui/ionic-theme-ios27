@@ -439,6 +439,15 @@ ion-back-button.ios:not(.ios-theme-disabled, .ios26-disabled) {
 
 // Toolbar button typography and spacing follow system toolbar controls.
 ion-toolbar.ios:not(.ios-theme-disabled, .ios26-disabled) {
+  // Menu actions keep their toolbar hit area even when a sibling prevents grouping.
+  ion-menu-button.ios:not(.ios-theme-disabled, .ios26-disabled):not(
+      :where(ion-buttons.ios-theme-disabled *, ion-buttons.ios26-disabled *)
+    ) {
+    width: 44px;
+    height: 44px;
+    padding: 2px;
+  }
+
   ion-button.ios:not(.ios-theme-disabled, .ios26-disabled):not(.button-small, .button-large):not(
       :where(ion-buttons.ios-theme-disabled *, ion-buttons.ios26-disabled *)
     ) {
