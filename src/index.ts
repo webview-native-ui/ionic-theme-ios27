@@ -1,5 +1,6 @@
 import { registeredEffect } from './sheets-of-glass/interfaces';
 import { registerEffect } from './sheets-of-glass';
+export { ios27ThemeConfig } from './preset';
 export * from './sheets-of-glass/interfaces';
 export {
   iosPopoverEnterAnimation as popoverEnterAnimation,

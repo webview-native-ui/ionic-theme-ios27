@@ -6,6 +6,77 @@ title: Theme migration
 
 This guide upgrades the standalone theme and its Capacitor integration. To adopt the Cordova-bundled theme, use [Moving an existing theme app to Cordova](cordova.md#moving-an-existing-theme-app-to-this-integration).
 
+## Optional: adopt the setup presets
+
+The preset CSS and `ios27ThemeConfig()` are additive convenience APIs. Adoption is optional, and existing individual CSS paths and animation exports remain supported. Follow [setup](setup.md) for a new application and [configuration](configuration.md) for the individual settings.
+
+### Replace the matching stylesheet group
+
+Keep the application's current appearance policy when choosing a preset. For example, an application using class-based dark mode can replace this group after Ionic's base CSS.
+
+Before the optional migration, the stylesheet contains these imports.
+
+```css
+@import '@ionic/core/css/palettes/dark.class.css';
+@import '@rdlabo/ionic-theme-ios27/dist/css/default-variables.css';
+@import '@rdlabo/ionic-theme-ios27/dist/css/ionic-theme-ios27.css';
+@import '@rdlabo/ionic-theme-ios27/dist/css/md-remove-ios-class-effect.css';
+@import '@rdlabo/ionic-theme-ios27/dist/css/ionic-theme-ios27-dark-class.css';
+```
+
+After the migration, the same group uses one preset.
+
+```css
+@import '@rdlabo/ionic-theme-ios27/preset/class.css';
+```
+
+Use `preset/system.css` for existing system dark mode and `preset/always.css` for existing always-dark mode. Keep Ionic's base CSS and application variable overrides, with application overrides following the preset. Class-based applications keep their existing `ion-palette-dark` toggle. Replace the corresponding imports together to avoid loading a second palette or duplicate theme styles. Applications with custom partial stylesheet composition can continue using the [individual imports](configuration.md#compose-individual-stylesheets).
+
+### Replace animation defaults and preserve application options
+
+An existing application may configure platform-dependent animation defaults before calling its framework initializer.
+
+```ts
+import { isPlatform } from '@ionic/core';
+import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios27';
+
+const ionicConfig = {
+  navAnimation: isPlatform('ios') ? iosTransitionAnimation : undefined,
+  popoverEnter: isPlatform('ios') ? popoverEnterAnimation : undefined,
+  popoverLeave: isPlatform('ios') ? popoverLeaveAnimation : undefined,
+  ...existingIonicConfig,
+};
+```
+
+The wrapper supplies those theme defaults. Pass the selected mode explicitly to preserve the application's existing platform-based mode selection.
+
+```ts
+import { isPlatform } from '@ionic/core';
+import { ios27ThemeConfig } from '@rdlabo/ionic-theme-ios27';
+
+const ionicConfig = ios27ThemeConfig({
+  ...existingIonicConfig,
+  mode: existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md'),
+});
+```
+
+Keep the application's own mode-selection function if it uses a different policy. Without an explicit mode, the wrapper defaults to `ios`, including desktop and Android. An explicit `md` mode receives no iOS animation defaults. Keep the existing framework initializer and pass it the returned configuration before rendering.
+
+Pass application options before adding theme defaults through the wrapper. Custom animations and explicit `undefined` animation values take precedence.
+
+```ts
+const ionicConfig = ios27ThemeConfig({
+  ...existingIonicConfig,
+  mode: selectedMode,
+  navAnimation: customNavigationAnimation,
+  popoverEnter: undefined,
+});
+```
+
+When replacing a previously assembled configuration, remove the old theme-default animation assignments from that configuration if you want the wrapper to supply them. An existing property set to `undefined` deliberately suppresses that animation default. Browser-capability conditions and multi-theme selection can keep their existing [adaptive configuration](adaptive-themes.md).
+
+After adoption, check the same modes and light/dark states your application previously supported, then verify navigation and popovers. Device layout and Native UI startup continue to use their respective APIs.
+
 ## Upgrading from 2.1.0
 
 This section covers the same upgrade in both the theme and Native UI guides; following either one is sufficient. Keep existing theme imports, stylesheets and animation setup. Native UI remains optional. If enabled, keep your existing `enableNativeUI()` call, control selection and application-root runtime. The older package-separation migration below does not need to be repeated.
@@ -80,7 +151,7 @@ Add the native package as a direct application dependency, update imports, rebui
 
 ## Device layout in 2.0
 
-Install Foldable alongside the theme as part of the standard setup:
+For device placement and posture support, install Foldable alongside the theme:
 
 ```sh
 npm install @rdlabo/ionic-theme-ios27 @erkamyaman/capacitor-foldable

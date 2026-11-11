@@ -11,7 +11,8 @@
       "import": "./dist/index.js"
     },
     "./dist/css/*": "./dist/css/*",
-    "./src/styles/*": "./src/styles/*"
+    "./src/styles/*": "./src/styles/*",
+    "./preset/*.css": "./dist/preset/*.css"
   },
   "files": [
     "dist",
@@ -22,18 +23,20 @@
   ],
   "scripts": {
     "build": "rm -rf dist && npm run build:css && npm run build:ts",
-    "build:css": "rm -rf dist/css && sass src/styles:dist/css --style=compressed --no-source-map",
+    "build:css": "rm -rf dist/css && sass src/styles:dist/css --style=compressed --no-source-map && npm run build:presets",
     "build:ts": "tsc --noEmit && rdlabo-build-theme",
     "build:demo": "npm run build && npm --prefix demo ci && npm --prefix demo run build -- --configuration=production",
     "lint": "prettier --check \"./**/*.{scss,ts,md}\" && prettier --parser angular --check \"./**/*.html\"",
     "fmt": "prettier --write \"./**/*.{scss,ts,md}\" && prettier --parser angular --write \"./**/*.html\"",
-    "test:esm": "node scripts/verify-packages.mjs --esm",
-    "test:packages": "node scripts/verify-packages.mjs",
+    "test:esm": "node scripts/verify-packages.mjs --esm && npm run test:presets",
+    "test:packages": "node scripts/verify-packages.mjs && npm run test:presets",
     "test:release": "node --test scripts/release.test.mjs",
     "release": "np --no-tests --no-publish --branch main",
     "test:native-candidate": "node scripts/test-native-candidate.mjs",
     "prebuild:css": "rdlabo-copy-structured-list src/styles/utils/structured-list.scss",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "build:presets": "node scripts/build-presets.mjs",
+    "test:presets": "node --test scripts/presets.test.mjs"
   },
   "repository": {
     "type": "git",
