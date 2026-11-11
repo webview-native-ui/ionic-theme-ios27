@@ -85,7 +85,7 @@
               "progress": false
             },
             "ionic8": {
-              "buildTarget": "app:build:ionic8"
+              "buildTarget": "app:build:development,ionic8"
             }
           },
           "defaultConfiguration": "development"
