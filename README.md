@@ -33,14 +33,14 @@ The standard guides use the standalone theme package, with Capacitor as the defa
 
 We use [Capacitor Foldable](https://github.com/erkamyaman/capacitor-foldable), an excellent community plugin by Erkam Yaman, as our standard device-layout integration. It exposes fold state, hinge geometry, bar placement and change events to your application, giving you control over how the layout responds. Foldable handles device reporting; the theme provides Web layout helpers and Native UI projects controls. Install it alongside the package you use, then connect its events in your app.
 
-Install the theme, add one global preset stylesheet after Ionic's base CSS, and pass the configuration preset to your existing Ionic initializer. See the [setup guide](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/setup) for Angular, React and Vue.
+Install the theme, add one global theme stylesheet after Ionic's base CSS, and pass the theme configuration to your existing Ionic initializer. See the [setup guide](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/setup) for Angular, React and Vue.
 
 ```sh
 npm install @rdlabo/ionic-theme-ios27 @erkamyaman/capacitor-foldable
 ```
 
 ```css
-@import '@rdlabo/ionic-theme-ios27/preset/system.css';
+@import '@rdlabo/ionic-theme-ios27/styles/system.css';
 ```
 
 ```ts
@@ -52,13 +52,13 @@ provideIonicAngular({
 });
 ```
 
-Choose `preset/class.css` for application-controlled dark mode or `preset/always.css` for always-dark mode. The preset includes the matching Ionic dark palette. The configuration preset defaults to iOS mode and its animations, with application options taking precedence. Ionic compatibility is `>=8.8.1 <10`. Browser-only apps do not need a native Capacitor project.
+Choose `styles/class.css` for application-controlled dark mode or `styles/always.css` for always-dark mode. The stylesheet includes the matching Ionic dark palette. The theme configuration defaults to iOS mode and its animations, with application options taking precedence. Ionic compatibility is `>=8.8.1 <10`. Browser-only apps do not need a native Capacitor project.
 
 The theme styles toolbars, tabs, lists, buttons, search, and overlays, with light and dark appearances. It does not activate native controls. Once the Web theme is working, you can optionally [add Native UI](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/add-native-ui).
 
 ## Customize your app
 
-Use [configuration](docs/configuration.md) for individual CSS and animation settings. Existing applications can optionally adopt the presets using the [migration guide](docs/migration.md#optional-adopt-the-setup-presets).
+Use [configuration](docs/configuration.md) for individual CSS and animation settings. Existing applications can optionally simplify their setup using the [migration guide](docs/migration.md#optional-simplify-the-setup).
 
 - [Features](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/features): CSS variables, Liquid Glass, and selective component imports.
 - [Special markup and classes](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/special-markup): opt-in component behavior.

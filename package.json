@@ -12,7 +12,7 @@
     },
     "./dist/css/*": "./dist/css/*",
     "./src/styles/*": "./src/styles/*",
-    "./preset/*.css": "./dist/preset/*.css"
+    "./styles/*.css": "./dist/styles/*.css"
   },
   "files": [
     "dist",

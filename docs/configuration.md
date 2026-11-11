@@ -1,16 +1,16 @@
 # Configure the iOS 27 theme
 
-The [setup guide](setup.md) uses one preset stylesheet and `ios27ThemeConfig`. This guide describes their defaults, application overrides and the individual CSS and animation APIs. Existing applications can adopt the presets using the [optional migration](migration.md#optional-adopt-the-setup-presets).
+The [setup guide](setup.md) uses one bundled stylesheet and `ios27ThemeConfig`. This guide describes their defaults, application overrides and the individual CSS and animation APIs. Existing applications can simplify their setup using the [optional migration](migration.md#optional-simplify-the-setup).
 
 ## Dark mode
 
-Choose one preset and load it globally after Ionic's base CSS. Each preset bundles the matching Ionic palette, default theme variables, component styles, Material Design compatibility styles and dark theme variant.
+Choose one stylesheet and load it globally after Ionic's base CSS. Each stylesheet bundles the matching Ionic palette, default theme variables, component styles, Material Design compatibility styles and dark theme variant.
 
-| Appearance policy | Preset                                        | Activation                               |
+| Appearance policy | Stylesheet                                    | Activation                               |
 | ----------------- | --------------------------------------------- | ---------------------------------------- |
-| System            | `@rdlabo/ionic-theme-ios27/preset/system.css` | System appearance.                       |
-| Manual            | `@rdlabo/ionic-theme-ios27/preset/class.css`  | `ion-palette-dark` on the document root. |
-| Always dark       | `@rdlabo/ionic-theme-ios27/preset/always.css` | Always active.                           |
+| System            | `@rdlabo/ionic-theme-ios27/styles/system.css` | System appearance.                       |
+| Manual            | `@rdlabo/ionic-theme-ios27/styles/class.css`  | `ion-palette-dark` on the document root. |
+| Always dark       | `@rdlabo/ionic-theme-ios27/styles/always.css` | Always active.                           |
 
 For class-based appearance, the application owns the class toggle.
 
@@ -18,7 +18,7 @@ For class-based appearance, the application owns the class toggle.
 document.documentElement.classList.toggle('ion-palette-dark', dark);
 ```
 
-Replace the equivalent individual theme imports and Ionic dark-palette import with the selected preset so each stylesheet loads once. Put application CSS variable overrides after the preset. Native controls inherit the resulting appearance marker. See [native appearance inheritance](https://docs.rdlabo.dev/projects/capacitor-native-ui/docs/appearance).
+Replace the equivalent individual theme imports and Ionic dark-palette import with the selected stylesheet so each stylesheet loads once. Put application CSS variable overrides after the stylesheet. Native controls inherit the resulting appearance marker. See [native appearance inheritance](https://docs.rdlabo.dev/projects/capacitor-native-ui/docs/appearance).
 
 ## Compose individual stylesheets
 
@@ -44,7 +44,7 @@ The compatibility stylesheet prevents iOS-specific utility classes from affectin
 
 ## Configuration defaults and overrides
 
-`ios27ThemeConfig` is a typed Ionic configuration object with `mode: 'ios'`, `iosTransitionAnimation`, `popoverEnterAnimation` and `popoverLeaveAnimation`. Spread it into the application's Ionic configuration before rendering. Properties added after the spread override the corresponding preset values, including explicit `undefined` values.
+`ios27ThemeConfig` is a typed Ionic configuration object with `mode: 'ios'`, `iosTransitionAnimation`, `popoverEnterAnimation` and `popoverLeaveAnimation`. Spread it into the application's Ionic configuration before rendering. Properties added after the spread override the corresponding configuration values, including explicit `undefined` values.
 
 ```ts
 import { ios27ThemeConfig } from '@rdlabo/ionic-theme-ios27';
@@ -56,13 +56,13 @@ const ionicConfig = {
 };
 ```
 
-A custom transition can replace `navAnimation` after the spread using the application's animation function. Create a new configuration object for application options, so other users of the shared preset retain its defaults.
+A custom transition can replace `navAnimation` after the spread using the application's animation function. Create a new configuration object for application options, so other users of the shared configuration retain its defaults.
 
 Pass this object to the application's existing Ionic initializer. Use `provideIonicAngular`, `setupIonicReact` or `app.use(IonicVue, ionicConfig)` according to the framework. The [setup guide](setup.md#3-pass-theme-configuration-to-ionic) lists the framework imports.
 
 ### Preserve platform-based mode selection
 
-The preset contains iOS mode and iOS animations. An application that selects its appearance by platform should select the whole configuration before Ionic initializes. For example, this application uses the iOS 27 theme on iOS and Ionic's Material Design defaults elsewhere.
+The configuration contains iOS mode and iOS animations. An application that selects its appearance by platform should select the whole configuration before Ionic initializes. For example, this application uses the iOS 27 theme on iOS and Ionic's Material Design defaults elsewhere.
 
 ```ts
 import { isPlatform } from '@ionic/core';
@@ -74,7 +74,7 @@ const ionicConfig = {
 };
 ```
 
-Use the application's existing mode-selection policy when it differs from this example. Changing only `mode` after spreading the preset retains its iOS animation properties. Select the appropriate configuration as a whole when both mode and animations should change. Browser-capability conditions and multi-theme selection can keep their [adaptive configuration](adaptive-themes.md).
+Use the application's existing mode-selection policy when it differs from this example. Changing only `mode` after spreading the configuration retains its iOS animation properties. Select the appropriate configuration as a whole when both mode and animations should change. Browser-capability conditions and multi-theme selection can keep their [adaptive configuration](adaptive-themes.md).
 
 ## Wire animations individually
 

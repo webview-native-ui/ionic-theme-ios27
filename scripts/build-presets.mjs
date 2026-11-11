@@ -1,10 +1,11 @@
 import { createRequire } from 'node:module';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 const require = createRequire(import.meta.url);
 const ionicLicense = readFileSync(join(dirname(require.resolve('@ionic/core/package.json')), 'LICENSE'), 'utf8');
-mkdirSync('dist/preset', { recursive: true });
+rmSync('dist/preset', { recursive: true, force: true });
+mkdirSync('dist/styles', { recursive: true });
 for (const mode of ['system', 'class', 'always']) {
   const files = [
     require.resolve(`@ionic/core/css/palettes/dark.${mode}.css`),
@@ -14,5 +15,5 @@ for (const mode of ['system', 'class', 'always']) {
     `dist/css/ionic-theme-ios27-dark-${mode}.css`,
   ];
   const styles = files.map((file) => readFileSync(file, 'utf8').replace(/\/\*# sourceMappingURL=.*?\*\//g, '')).join('\n');
-  writeFileSync(`dist/preset/${mode}.css`, `/*! @ionic/core palette\n${ionicLicense} */\n${styles}`);
+  writeFileSync(`dist/styles/${mode}.css`, `/*! @ionic/core palette\n${ionicLicense} */\n${styles}`);
 }

@@ -1,6 +1,6 @@
 # Set up the iOS 27 theme
 
-Give an existing Ionic app the iOS 27 appearance with one stylesheet and one configuration preset. This guide uses the iOS 27 theme on its own and system dark mode. For browser-dependent iOS 26/27 styling or MD3, use [adaptive themes](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/adaptive-themes) instead.
+Give an existing Ionic app the iOS 27 appearance with one stylesheet and one theme configuration object. This guide uses the iOS 27 theme on its own and system dark mode. For browser-dependent iOS 26/27 styling or MD3, use [adaptive themes](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/adaptive-themes) instead.
 
 ## Before you start
 
@@ -16,13 +16,13 @@ Foldable supplies device placement and posture. Connect its initial values and c
 
 ## 2. Load one stylesheet
 
-Add the preset after Ionic's base CSS in your global stylesheet. Replace your existing Ionic dark palette and theme imports with this preset so each stylesheet loads once.
+Add the stylesheet after Ionic's base CSS in your global stylesheet. Replace your existing Ionic dark palette and theme imports with this stylesheet so each stylesheet loads once.
 
 ```css
-@import '@rdlabo/ionic-theme-ios27/preset/system.css';
+@import '@rdlabo/ionic-theme-ios27/styles/system.css';
 ```
 
-The preset bundles the matching Ionic dark palette and theme styles. For manual or always-dark appearance, stylesheet composition and application overrides, see [configuration](configuration.md#dark-mode).
+The stylesheet bundles the matching Ionic dark palette and theme styles. For manual or always-dark appearance, stylesheet composition and application overrides, see [configuration](configuration.md#dark-mode).
 
 ## 3. Pass theme configuration to Ionic
 
@@ -35,7 +35,7 @@ const ionicConfig = {
 };
 ```
 
-The preset supplies `mode: 'ios'` and page-transition and popover animations. Pass this configuration to your existing Ionic initializer before rendering. Add application options after the spread when needed.
+The configuration supplies `mode: 'ios'` and page-transition and popover animations. Pass this configuration to your existing Ionic initializer before rendering. Add application options after the spread when needed.
 
 | Framework         | Apply the options                                                   |
 | ----------------- | ------------------------------------------------------------------- |
@@ -44,7 +44,7 @@ The preset supplies `mode: 'ios'` and page-transition and popover animations. Pa
 | React             | `setupIonicReact(ionicConfig)` from `@ionic/react`                  |
 | Vue               | `app.use(IonicVue, ionicConfig)` with `IonicVue` from `@ionic/vue`  |
 
-Existing applications can follow the [optional preset migration](migration.md#optional-adopt-the-setup-presets) to preserve platform-based mode selection and custom animations. See [configuration](configuration.md) for individual stylesheet and animation APIs.
+Existing applications can follow the [optional setup migration](migration.md#optional-simplify-the-setup) to preserve platform-based mode selection and custom animations. See [configuration](configuration.md) for individual stylesheet and animation APIs.
 
 ## 4. Preview your first screen
 

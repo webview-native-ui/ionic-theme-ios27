@@ -24,7 +24,7 @@ test('application options override defaults without mutating their object', () =
   assert.notEqual(result, existing);
 });
 
-test('application spread options control mode and leave the preset unchanged', () => {
+test('application spread options control mode and leave the configuration unchanged', () => {
   assert.equal({ ...ios27ThemeConfig, mode: 'md' }.mode, 'md');
   assert.equal({ ...ios27ThemeConfig, mode: undefined }.mode, undefined);
   assert.equal(ios27ThemeConfig.mode, 'ios');
@@ -33,8 +33,8 @@ test('application spread options control mode and leave the preset unchanged', (
 
 const require = createRequire(import.meta.url);
 for (const mode of ['system', 'class', 'always']) {
-  test(`${mode} preset bundles matching palette and styles in order`, () => {
-    const preset = readFileSync(`dist/preset/${mode}.css`, 'utf8');
+  test(`${mode} stylesheet bundles matching palette and styles in order`, () => {
+    const stylesheet = readFileSync(require.resolve(`@rdlabo/ionic-theme-ios27/styles/${mode}.css`), 'utf8');
     const files = [
       require.resolve(`@ionic/core/css/palettes/dark.${mode}.css`),
       'dist/css/default-variables.css',
@@ -45,11 +45,11 @@ for (const mode of ['system', 'class', 'always']) {
     let offset = 0;
     for (const file of files) {
       const content = readFileSync(file, 'utf8').replace(/\/\*# sourceMappingURL=.*?\*\//g, '');
-      const index = preset.indexOf(content, offset);
+      const index = stylesheet.indexOf(content, offset);
       assert(index >= offset, `Missing or out-of-order ${file}`);
       offset = index + content.length;
     }
-    assert(!preset.includes('@import'));
-    assert(!preset.includes('sourceMappingURL'));
+    assert(!stylesheet.includes('@import'));
+    assert(!stylesheet.includes('sourceMappingURL'));
   });
 }
