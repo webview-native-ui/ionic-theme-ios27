@@ -38,7 +38,9 @@ function runBetaRelease(t, { existing = {}, legacy = false, failTheme = false, c
 const fs = require('node:fs');
 const args = process.argv.slice(2);
 fs.appendFileSync(process.env.CALL_LOG, JSON.stringify(args) + '\\n');
-if (args[0] === 'view') {
+if (args[0] === 'root') {
+  console.log(process.env.REAL_NPM_ROOT);
+} else if (args[0] === 'view') {
   const value = JSON.parse(fs.readFileSync(process.env.REGISTRY))[args[1]];
   if (value.startsWith('E')) {
     process.stdout.write(JSON.stringify({error: {code: value}}));
@@ -63,10 +65,11 @@ if (args[0] === 'view') {
       ...process.env, PATH: `${directory}:${process.env.PATH}`, RUNNER_TEMP: directory,
       VERSION: version, EXPECTED_VERSION: version, EXPECTED_NAME: names.at(-1), DIST_TAG: 'beta',
       CALL_LOG: log, REGISTRY: join(directory, 'registry.json'), FAIL_THEME: String(failTheme),
+      REAL_NPM_ROOT: execFileSync('npm', ['root', '-g'], { encoding: 'utf8' }).trim(),
       CONFLICT: String(Boolean(conflict)), INTEGRITY: conflict === 'different' ? 'sha512-different' : integrity,
     },
   });
-  const calls = existsSync(log) ? readFileSync(log, 'utf8').trim().split('\n').map(line => JSON.parse(line)) : [];
+  const calls = existsSync(log) ? readFileSync(log, 'utf8').trim().split('\n').map(line => JSON.parse(line)).filter(([op]) => op !== 'root') : [];
   return { result, calls, published: calls.filter(call => call[0] === 'publish') };
 }
 
