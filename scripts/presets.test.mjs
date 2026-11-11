@@ -8,35 +8,34 @@ import { ios26ThemeConfig, iosTransitionAnimation, popoverEnterAnimation, popove
 const require = createRequire(import.meta.url);
 const readCss = async (path) => (await readFile(path, 'utf8')).replace(/\/\*# sourceMappingURL=.*?\*\//g, '').trim();
 
-test('supplies iOS defaults before Ionic initialization, including undefined mode', () => {
-  const expected = {
+test('exports iOS defaults that can be imported without a DOM', () => {
+  assert.deepEqual(ios26ThemeConfig, {
     mode: 'ios',
     navAnimation: iosTransitionAnimation,
     popoverEnter: popoverEnterAnimation,
     popoverLeave: popoverLeaveAnimation,
-  };
-  assert.deepEqual(ios26ThemeConfig(), expected);
-  assert.deepEqual(ios26ThemeConfig({ mode: undefined }), expected);
-});
-
-test('preserves explicit animation options without mutating the input', () => {
-  const navAnimation = () => {};
-  const existing = { navAnimation, popoverEnter: undefined, animated: false };
-  const original = { ...existing };
-  assert.deepEqual(ios26ThemeConfig(existing), {
-    mode: 'ios',
-    navAnimation,
-    popoverEnter: undefined,
-    popoverLeave: popoverLeaveAnimation,
-    animated: false,
   });
-  assert.deepEqual(existing, original);
 });
 
-test('adds no iOS animation defaults to explicit Material Design mode', () => {
-  assert.deepEqual(ios26ThemeConfig({ mode: 'md' }), { mode: 'md' });
+test('spread options override defaults without mutating the preset', () => {
+  const original = { ...ios26ThemeConfig };
   const navAnimation = () => {};
-  assert.deepEqual(ios26ThemeConfig({ mode: 'md', navAnimation }), { mode: 'md', navAnimation });
+  const config = { ...ios26ThemeConfig, navAnimation, animated: false };
+  assert.equal(config.navAnimation, navAnimation);
+  assert.equal(config.animated, false);
+  assert.deepEqual(ios26ThemeConfig, original);
+});
+
+test('explicit undefined options retain normal object spread semantics', () => {
+  const config = { ...ios26ThemeConfig, mode: undefined, popoverEnter: undefined };
+  assert.equal(config.mode, undefined);
+  assert.equal(config.popoverEnter, undefined);
+});
+
+test('applications can select the preset only for iOS mode', () => {
+  const configForMode = (mode) => ({ ...(mode === 'ios' ? ios26ThemeConfig : {}), mode });
+  assert.deepEqual(configForMode('ios'), ios26ThemeConfig);
+  assert.deepEqual(configForMode('md'), { mode: 'md' });
 });
 
 for (const mode of ['system', 'class', 'always']) {

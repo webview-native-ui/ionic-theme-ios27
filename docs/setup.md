@@ -25,7 +25,7 @@ existing theme and Ionic dark-palette imports.
 
 ## 3. Configure Ionic
 
-Pass `ios26ThemeConfig()` to your existing framework initializer before rendering.
+Spread `ios26ThemeConfig` into your existing framework initializer before rendering.
 Use the example for your framework.
 
 Angular with Ionic 9 imports `provideIonicAngular` from `@ionic/angular`.
@@ -36,7 +36,10 @@ import { provideIonicAngular } from '@ionic/angular';
 import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
 
 // In the application's existing providers array
-provideIonicAngular(ios26ThemeConfig());
+provideIonicAngular({
+  ...ios26ThemeConfig,
+  // animated: false,
+});
 ```
 
 For React:
@@ -45,7 +48,10 @@ For React:
 import { setupIonicReact } from '@ionic/react';
 import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
 
-setupIonicReact(ios26ThemeConfig());
+setupIonicReact({
+  ...ios26ThemeConfig,
+  // animated: false,
+});
 ```
 
 For Vue, use the application's existing Vue app:
@@ -54,14 +60,16 @@ For Vue, use the application's existing Vue app:
 import { IonicVue } from '@ionic/vue';
 import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
 
-app.use(IonicVue, ios26ThemeConfig());
+app.use(IonicVue, {
+  ...ios26ThemeConfig,
+  // animated: false,
+});
 ```
 
-The helper defaults to `mode: 'ios'`, so the theme also appears in desktop
-previews. Pass your existing options as `ios26ThemeConfig(existingIonicConfig)`
-to retain custom options and animations. If the application selects modes by
-platform, pass the resolved mode to preserve that policy. See
-[Configuration](configuration.md#preset-options-and-customization) for the example.
+The preset sets `mode: 'ios'`, so the theme also appears in desktop previews.
+Add your Ionic options after the spread to override defaults. If your application
+selects modes by platform, conditionally spread the preset only in iOS mode. See
+[Configuration](configuration.md#preset-options-and-customization) for an example.
 
 ## 4. Preview
 

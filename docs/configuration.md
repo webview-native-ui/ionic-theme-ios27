@@ -43,19 +43,18 @@ that mode. This example retains Material Design mode on other platforms.
 import { isPlatform, type IonicConfig } from '@ionic/core';
 import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
 
-const mode = existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md');
+const mode = isPlatform('ios') ? 'ios' : 'md';
 const ionicConfig: IonicConfig = {
   ...(mode === 'ios'
     ? { navAnimation: iosTransitionAnimation, popoverEnter: popoverEnterAnimation, popoverLeave: popoverLeaveAnimation }
     : {}),
-  ...existingIonicConfig,
   mode,
+  // animated: false,
 };
 ```
 
-`existingIonicConfig` is your application's current Ionic options object. Use `{}`
-when there are no additional options. Its explicit values take precedence in this
-example. Pass `ionicConfig` to your framework's existing initializer.
+Add application-specific Ionic options to this object. Pass `ionicConfig` to your
+framework's existing initializer.
 
 | Framework         | Initializer                        | Import                      |
 | ----------------- | ---------------------------------- | --------------------------- |
@@ -66,23 +65,39 @@ example. Pass `ionicConfig` to your framework's existing initializer.
 
 ## Preset options and customization
 
-`ios26ThemeConfig(existingIonicConfig)` supplies iOS navigation and popover
-animations, and defaults an omitted or undefined mode to `ios`. An explicit
-`mode: 'md'` receives no iOS animation defaults. Preserve platform-based mode
-selection by passing its resolved mode.
+`ios26ThemeConfig` is a typed Ionic configuration object containing `mode: 'ios'`
+and the iOS navigation and popover animations. Spread it into your Ionic options,
+then add overrides.
 
 ```ts
-import { isPlatform } from '@ionic/core';
 import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
 
-const mode = existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md');
-const ionicConfig = ios26ThemeConfig({ ...existingIonicConfig, mode });
+const ionicConfig = {
+  ...ios26ThemeConfig,
+  // animated: false,
+};
 ```
 
-Explicit Ionic options take precedence over the helper's defaults, including
-custom `navAnimation`, `popoverEnter`, and `popoverLeave` functions. An explicitly
-supplied `undefined` animation also takes precedence over that animation default.
-The helper reads no browser globals and can be imported in a server-rendered app.
+Properties after the spread take precedence, including custom `navAnimation`,
+`popoverEnter`, and `popoverLeave` functions. An explicit `undefined` property also
+overrides the preset value through normal JavaScript object spread semantics.
+The object reads no browser globals and can be imported in a server-rendered app.
+
+For platform-based mode selection, spread the preset only when the effective mode
+is iOS. Changing `mode` alone keeps the spread animation functions, so choose the
+preset and mode together before initializing Ionic.
+
+```ts
+import { isPlatform, type IonicConfig } from '@ionic/core';
+import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
+
+const mode = isPlatform('ios') ? 'ios' : 'md';
+const ionicConfig: IonicConfig = {
+  ...(mode === 'ios' ? ios26ThemeConfig : {}),
+  mode,
+  // animated: false,
+};
+```
 
 For replacing an existing manual setup, see [Optional preset adoption](migration.md#optional-adopt-the-setup-presets).
 
@@ -118,14 +133,14 @@ import { isPlatform, type IonicConfig } from '@ionic/core';
 import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
 import { mdTransitionAnimation } from '@rdlabo/ionic-theme-md3';
 
-const mode = existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md');
+const mode = isPlatform('ios') ? 'ios' : 'md';
 const ios = mode === 'ios';
 const ionicConfig: IonicConfig = {
   navAnimation: ios ? iosTransitionAnimation : mdTransitionAnimation,
   popoverEnter: ios ? popoverEnterAnimation : undefined,
   popoverLeave: ios ? popoverLeaveAnimation : undefined,
-  ...existingIonicConfig,
   mode,
+  // animated: false,
 };
 ```
 

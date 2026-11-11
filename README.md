@@ -22,14 +22,16 @@ After Ionic's base CSS, add the system-dark preset to your global stylesheet.
 @import '@rdlabo/ionic-theme-ios26/preset/system.css';
 ```
 
-Pass `ios26ThemeConfig(existingIonicConfig)` to your existing Ionic initializer.
-The helper supplies iOS mode and theme animations while accepting your Ionic
-options. An explicit mode takes precedence.
+Spread `ios26ThemeConfig` into your existing Ionic initializer's options. The
+preset supplies iOS mode and theme animations.
 
 ```ts
 import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
 
-const ionicConfig = ios26ThemeConfig();
+const ionicConfig = {
+  ...ios26ThemeConfig,
+  // animated: false,
+};
 ```
 
 Follow [Set up the theme](docs/setup.md) for Angular, React, and Vue examples,

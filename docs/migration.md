@@ -33,39 +33,51 @@ For manual dark mode, use `preset/class.css` and retain your document root's
 The preset includes the matching Ionic palette. Keep additional selective styles,
 such as `md-ion-list-inset.css`, according to your application's existing needs.
 
-Replace the manually assembled animation defaults with the configuration helper.
-The following diff preserves platform-based mode selection.
-`existingIonicConfig` is your application's current options object. Use `{}` when
-there are no additional options.
+Replace the manually assembled configuration with a preset spread. This example
+keeps a concrete application option, `animated: false`, after the preset.
 
 ```diff
-- import { isPlatform, type IonicConfig } from '@ionic/core';
 - import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
-+ import { isPlatform } from '@ionic/core';
 + import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
 
- const mode = existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md');
-- const ionicConfig: IonicConfig = {
+ const ionicConfig = {
+-   mode: 'ios',
+-   navAnimation: iosTransitionAnimation,
+-   popoverEnter: popoverEnterAnimation,
+-   popoverLeave: popoverLeaveAnimation,
++   ...ios26ThemeConfig,
+   animated: false,
+ };
+```
+
+Pass the object to the same `provideIonicAngular`, `setupIonicReact`, or
+`app.use(IonicVue, ...)` call your application already uses. Properties after the
+spread take precedence over the preset, including custom animations and explicitly
+supplied `undefined` values. Keep your custom options after the spread.
+
+The preset sets `mode: 'ios'` and includes iOS animations. Preserve a platform-based
+mode policy by conditionally spreading the preset only for the effective iOS mode.
+This example keeps the application's existing platform selection.
+
+```diff
+ import { isPlatform, type IonicConfig } from '@ionic/core';
+- import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
++ import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
+
+ const mode = isPlatform('ios') ? 'ios' : 'md';
+ const ionicConfig: IonicConfig = {
 -   ...(mode === 'ios'
 -     ? { navAnimation: iosTransitionAnimation, popoverEnter: popoverEnterAnimation, popoverLeave: popoverLeaveAnimation }
 -     : {}),
--   ...existingIonicConfig,
--   mode,
-- };
-+ const ionicConfig = ios26ThemeConfig({ ...existingIonicConfig, mode });
++   ...(mode === 'ios' ? ios26ThemeConfig : {}),
+   mode,
+ };
 ```
 
-Pass the result to the same `provideIonicAngular`, `setupIonicReact`, or
-`app.use(IonicVue, ...)` call your application already uses. Resolve mode before
-Ionic initializes. The helper defaults an omitted or undefined mode to `ios`;
-an explicit `md` mode receives no iOS animation defaults. Supply your existing
-resolved mode when preserving Ionic's platform-dependent appearance.
-
-Explicit Ionic options take precedence over the helper's animation defaults,
-including custom `navAnimation`, `popoverEnter`, `popoverLeave`, and an explicitly
-supplied `undefined`. Keep custom animations in the options passed to the helper.
-For per-file CSS composition and mixed-theme recipes, see
-[Configuration](configuration.md).
+Changing `mode` after an unconditional preset spread retains its animation
+functions. Select the preset and mode together before Ionic initializes. Keep your
+existing dark-mode policy when choosing the CSS preset. For individual CSS and
+animation options and mixed-theme recipes, see [Configuration](configuration.md).
 
 ## Migrating to 9.2.0
 
