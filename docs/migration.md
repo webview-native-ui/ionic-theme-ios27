@@ -20,12 +20,12 @@ your current dark-mode policy. For a system-dark application, apply this change
 after Ionic's base CSS and before application overrides.
 
 ```diff
--@import '@ionic/core/css/palettes/dark.system.css';
--@import '@rdlabo/ionic-theme-ios26/dist/css/default-variables.css';
--@import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css';
--@import '@rdlabo/ionic-theme-ios26/dist/css/md-remove-ios-class-effect.css';
--@import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-system.css';
-+@import '@rdlabo/ionic-theme-ios26/preset/system.css';
+- @import '@ionic/core/css/palettes/dark.system.css';
+- @import '@rdlabo/ionic-theme-ios26/dist/css/default-variables.css';
+- @import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css';
+- @import '@rdlabo/ionic-theme-ios26/dist/css/md-remove-ios-class-effect.css';
+- @import '@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-system.css';
++ @import '@rdlabo/ionic-theme-ios26/preset/system.css';
 ```
 
 For manual dark mode, use `preset/class.css` and retain your document root's
@@ -39,20 +39,20 @@ The following diff preserves platform-based mode selection.
 there are no additional options.
 
 ```diff
--import { isPlatform, type IonicConfig } from '@ionic/core';
--import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
-+import { isPlatform } from '@ionic/core';
-+import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
+- import { isPlatform, type IonicConfig } from '@ionic/core';
+- import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios26';
++ import { isPlatform } from '@ionic/core';
++ import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
 
  const mode = existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md');
--const ionicConfig: IonicConfig = {
--  ...(mode === 'ios'
--    ? { navAnimation: iosTransitionAnimation, popoverEnter: popoverEnterAnimation, popoverLeave: popoverLeaveAnimation }
--    : {}),
--  ...existingIonicConfig,
--  mode,
--};
-+const ionicConfig = ios26ThemeConfig({ ...existingIonicConfig, mode });
+- const ionicConfig: IonicConfig = {
+-   ...(mode === 'ios'
+-     ? { navAnimation: iosTransitionAnimation, popoverEnter: popoverEnterAnimation, popoverLeave: popoverLeaveAnimation }
+-     : {}),
+-   ...existingIonicConfig,
+-   mode,
+- };
++ const ionicConfig = ios26ThemeConfig({ ...existingIonicConfig, mode });
 ```
 
 Pass the result to the same `provideIonicAngular`, `setupIonicReact`, or
