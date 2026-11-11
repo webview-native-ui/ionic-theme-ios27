@@ -15,12 +15,12 @@ The preset CSS and `ios27ThemeConfig()` are additive convenience APIs. Adoption 
 Keep the application's current appearance policy when choosing a preset. For example, an application using class-based dark mode can replace this group after Ionic's base CSS.
 
 ```diff
--@import '@ionic/core/css/palettes/dark.class.css';
--@import '@rdlabo/ionic-theme-ios27/dist/css/default-variables.css';
--@import '@rdlabo/ionic-theme-ios27/dist/css/ionic-theme-ios27.css';
--@import '@rdlabo/ionic-theme-ios27/dist/css/md-remove-ios-class-effect.css';
--@import '@rdlabo/ionic-theme-ios27/dist/css/ionic-theme-ios27-dark-class.css';
-+@import '@rdlabo/ionic-theme-ios27/preset/class.css';
+- @import '@ionic/core/css/palettes/dark.class.css';
+- @import '@rdlabo/ionic-theme-ios27/dist/css/default-variables.css';
+- @import '@rdlabo/ionic-theme-ios27/dist/css/ionic-theme-ios27.css';
+- @import '@rdlabo/ionic-theme-ios27/dist/css/md-remove-ios-class-effect.css';
+- @import '@rdlabo/ionic-theme-ios27/dist/css/ionic-theme-ios27-dark-class.css';
++ @import '@rdlabo/ionic-theme-ios27/preset/class.css';
 ```
 
 Use `preset/system.css` for existing system dark mode and `preset/always.css` for existing always-dark mode. Keep Ionic's base CSS and application variable overrides, with application overrides following the preset. Class-based applications keep their existing `ion-palette-dark` toggle. Replace the corresponding imports together to avoid loading a second palette or duplicate theme styles. Applications with custom partial stylesheet composition can continue using the [individual imports](configuration.md#compose-individual-stylesheets).
@@ -31,18 +31,18 @@ Replace the manually assembled animation defaults with the wrapper. Pass the sel
 
 ```diff
  import { isPlatform } from '@ionic/core';
--import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios27';
-+import { ios27ThemeConfig } from '@rdlabo/ionic-theme-ios27';
+- import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from '@rdlabo/ionic-theme-ios27';
++ import { ios27ThemeConfig } from '@rdlabo/ionic-theme-ios27';
 
--const ionicConfig = {
--  navAnimation: isPlatform('ios') ? iosTransitionAnimation : undefined,
--  popoverEnter: isPlatform('ios') ? popoverEnterAnimation : undefined,
--  popoverLeave: isPlatform('ios') ? popoverLeaveAnimation : undefined,
-+const ionicConfig = ios27ThemeConfig({
+- const ionicConfig = {
+-   navAnimation: isPlatform('ios') ? iosTransitionAnimation : undefined,
+-   popoverEnter: isPlatform('ios') ? popoverEnterAnimation : undefined,
+-   popoverLeave: isPlatform('ios') ? popoverLeaveAnimation : undefined,
++ const ionicConfig = ios27ThemeConfig({
    ...existingIonicConfig,
--};
-+  mode: existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md'),
-+});
+- };
++   mode: existingIonicConfig.mode ?? (isPlatform('ios') ? 'ios' : 'md'),
++ });
 ```
 
 Keep the application's own mode-selection function if it uses a different policy. Without an explicit mode, the wrapper defaults to `ios`, including desktop and Android. An explicit `md` mode receives no iOS animation defaults. Keep the existing framework initializer and pass it the returned configuration before rendering.
