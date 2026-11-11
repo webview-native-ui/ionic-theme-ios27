@@ -704,7 +704,9 @@ jobs:
               '--registry=https://registry.npmjs.org'], { encoding: 'utf8' });
             if (existing.status === 0) {
               const integrity = 'sha512-' + createHash('sha512').update(readFileSync(archive)).digest('base64');
-              assert.equal(JSON.parse(existing.stdout), integrity, `${spec} already exists with different contents`);
+              const publishedIntegrity = JSON.parse(existing.stdout);
+              assert.deepEqual(Array.isArray(publishedIntegrity) ? publishedIntegrity : [publishedIntegrity],
+                [integrity], `${spec} already exists with different contents`);
               return true;
             }
             let error;
@@ -722,9 +724,9 @@ jobs:
               if (result.status === 0) continue;
               let code;
               try { code = JSON.parse(result.stdout).error?.code; } catch {}
-              // A concurrent publish may fail in npm's version check or during the PUT.
+              // A concurrent publish may fail before its metadata reaches registry caches.
               let matched = false;
-              for (const delay of code === 'E409' ? [0, 2000, 4000, 8000, 16000] : [0]) {
+              for (const delay of code === 'E409' ? [0, 2000, 4000, 8000, 16000, 30000, 60000, 60000, 60000, 60000] : [0]) {
                 if (delay) await new Promise(resolve => setTimeout(resolve, delay));
                 if (isPublished(spec, archive)) {
                   matched = true;

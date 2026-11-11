@@ -11,7 +11,7 @@ const workflow = readFileSync(new URL('../.github/workflows/release.yml', import
 const native = '@rdlabo/capacitor-native-ui';
 const theme = '@rdlabo/ionic-theme-ios27';
 
-function runBetaRelease(t, { existing = {}, legacy = false, failTheme = false, conflict = false } = {}) {
+function runBetaRelease(t, { existing = {}, legacy = false, failTheme = false, conflict = false, arrayIntegrity = false } = {}) {
   const directory = mkdtempSync(join(tmpdir(), 'release-test-'));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const version = '1.2.2-beta.pr298.sha0123456789ab';
@@ -42,11 +42,11 @@ if (args[0] === 'root') {
   console.log(process.env.REAL_NPM_ROOT);
 } else if (args[0] === 'view') {
   const value = JSON.parse(fs.readFileSync(process.env.REGISTRY))[args[1]];
-  if (value.startsWith('E')) {
+  if (typeof value === 'string' && value.startsWith('E')) {
     process.stdout.write(JSON.stringify({error: {code: value}}));
     process.exit(1);
   }
-  process.stdout.write(JSON.stringify(value));
+  process.stdout.write(JSON.stringify(process.env.ARRAY_INTEGRITY === 'true' ? [value] : value));
 } else if (args[0] === 'publish' && process.env.CONFLICT === 'true') {
   const registry = JSON.parse(fs.readFileSync(process.env.REGISTRY));
   for (const spec of Object.keys(registry)) registry[spec] = process.env.INTEGRITY;
@@ -67,6 +67,7 @@ if (args[0] === 'root') {
       CALL_LOG: log, REGISTRY: join(directory, 'registry.json'), FAIL_THEME: String(failTheme),
       REAL_NPM_ROOT: execFileSync('npm', ['root', '-g'], { encoding: 'utf8' }).trim(),
       CONFLICT: String(Boolean(conflict)), INTEGRITY: conflict === 'different' ? 'sha512-different' : integrity,
+      ARRAY_INTEGRITY: String(arrayIntegrity),
     },
   });
   const calls = existsSync(log) ? readFileSync(log, 'utf8').trim().split('\n').map(line => JSON.parse(line)).filter(([op]) => op !== 'root') : [];
@@ -96,6 +97,23 @@ test(`beta: complete release is idempotent`, t => {
   assert.equal(result.status, 0, result.stderr);
   assert.equal(published.length, 0);
 });
+test('beta: matching single-element integrity array skips publication', t => {
+  const { result, published } = runBetaRelease(t, { existing: { [theme]: 'matching' }, arrayIntegrity: true });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(published.length, 0);
+});
+test('ios26 beta: matching single-element integrity array skips publication', t => {
+  const { result, published } = runBetaRelease(t, {
+    existing: { '@rdlabo/ionic-theme-ios26': 'matching' }, legacy: true, arrayIntegrity: true,
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(published.length, 0);
+});
+test('beta: a conflict succeeds when matching integrity becomes visible as an array', t => {
+  const { result, calls } = runBetaRelease(t, { conflict: true, arrayIntegrity: true });
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(calls.map(call => call[0]), ['view', 'publish', 'view']);
+});
 test('beta: a publish conflict succeeds when the same archive becomes visible', (t) => {
   const { result, calls } = runBetaRelease(t, { conflict: true });
   assert.equal(result.status, 0, result.stderr);
@@ -112,10 +130,57 @@ test('beta: a publish conflict with different contents fails', (t) => {
   assert.equal(published.length, 1);
 });
 
+test('beta: a conflict waits for registry visibility beyond the initial thirty seconds', async () => {
+  const source = workflow.slice(
+    workflow.indexOf('const isPublished ='),
+    workflow.indexOf('\n          JS', workflow.indexOf('const isPublished =')),
+  );
+  const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
+  const run = new AsyncFunction(
+    'assert', 'createHash', 'readFileSync', 'spawnSync', 'archives', 'EXPECTED_VERSION',
+    'DIST_TAG', 'process', 'console', 'setTimeout', source,
+  );
+  const archive = Buffer.from('immutable beta archive');
+  const integrity = 'sha512-' + createHash('sha512').update(archive).digest('base64');
+  let views = 0;
+  let publishes = 0;
+  const delays = [];
+  const spawn = (command, args) => {
+    assert.equal(command, 'npm');
+    if (args[0] === 'view') {
+      views++;
+      return views < 8
+        ? { status: 1, stdout: JSON.stringify({ error: { code: 'E404' } }) }
+        : { status: 0, stdout: JSON.stringify([integrity]) };
+    }
+    assert.equal(args[0], 'publish');
+    publishes++;
+    return { status: 1, stdout: JSON.stringify({ error: { code: 'E409' } }) };
+  };
+  await run(
+    assert, createHash, () => archive, spawn, new Map([[theme, 'candidate.tgz']]), '1.0.0-beta.test',
+    'beta', { stdout: { write() {} }, stderr: { write() {} } }, { log() {} },
+    (callback, delay) => { delays.push(delay); callback(); },
+  );
+  assert.equal(publishes, 1);
+  assert.equal(views, 8);
+  assert(delays.reduce((total, delay) => total + delay, 0) > 30000);
+  assert(delays.reduce((total, delay) => total + delay, 0) <= 300000);
+  assert(delays.every(delay => delay <= 60000));
+});
+
 for (const value of ['sha512-different', 'E401', 'E500']) {
   test(`beta: ${value} on theme prevents publication`, t => {
     const { result, published } = runBetaRelease(t, { existing: { [theme]: value } });
     assert.notEqual(result.status, 0);
+    assert.equal(published.length, 0);
+  });
+}
+for (const value of [[], ['sha512-different'], ['sha512-first', 'sha512-second'], [['sha512-nested']], { integrity: 'sha512-wrapped' }]) {
+  test(`beta: unexpected registry integrity ${JSON.stringify(value)} prevents publication`, t => {
+    const { result, published } = runBetaRelease(t, { existing: { [theme]: value } });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /already exists with different contents/);
     assert.equal(published.length, 0);
   });
 }
