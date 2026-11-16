@@ -24,3 +24,10 @@ h3 {
 .badge-off {
   display: none;
 }
+
+.badge-clone-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 68px;
+}
