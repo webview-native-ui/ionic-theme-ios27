@@ -22,6 +22,7 @@ const routes = [
   ...typesPath({ path: '/main/index/action-sheet', name: 'action-sheet' }, actionSheetTypes),
   ...typesPath({ path: '/main/index/alert', name: 'alert' }, alertTypes),
   { path: '/main/index/button', name: 'button' },
+  { path: '/main/index/toolbar-badge', name: 'toolbar-badge' },
   { path: '/main/index/checkbox', name: 'checkbox' },
   { path: '/main/index/range', name: 'range' },
   ...typesPath({ path: '/main/index/toast', name: 'toast' }, toastTypes),
@@ -51,6 +52,11 @@ const routes = [
 const prepareScreenShot = async (page: Page, routeName: string) => {
   await page.waitForSelector('ion-content[role="main"]', { timeout: 10000 });
   await page.evaluate(() => document.fonts.ready);
+  if (routeName === 'toolbar-badge') {
+    // Keep both directions and the unaffected-control examples in one image.
+    await page.setViewportSize({ width: 1200, height: 1000 });
+    return;
+  }
   if (!routeName.includes(':')) {
     const scrollHeight = await page.locator('ion-content[role="main"]').evaluate(async (el: HTMLIonContentElement) => {
       const scrollEl = await el.getScrollElement();
