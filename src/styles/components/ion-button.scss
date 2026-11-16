@@ -542,8 +542,6 @@ ion-toolbar.ios:not(.ios-theme-disabled, .ios26-disabled) {
     }
 
     > ion-badge:not(.ios-theme-disabled, .ios26-disabled) {
-      --background: #ff373c;
-      --color: #fff;
       position: absolute;
       box-sizing: border-box;
       margin: 0;
