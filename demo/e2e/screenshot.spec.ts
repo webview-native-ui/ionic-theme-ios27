@@ -65,6 +65,11 @@ const prepareScreenShot = async (page: Page, routeName: string) => {
   if (routeName === 'toolbar-badge') {
     // Keep both directions and the unaffected-control examples in one image.
     await page.setViewportSize({ width: 1200, height: 1000 });
+    // LTR holds an actual glass-group press; RTL retains the resting group.
+    const pressed = page.locator('app-toolbar-badge [data-badge-group] ion-button').first();
+    await pressed.hover();
+    await page.mouse.down();
+    await pressed.evaluate((button) => button.classList.add('ion-activated'));
     return;
   }
   if (!routeName.includes(':')) {
