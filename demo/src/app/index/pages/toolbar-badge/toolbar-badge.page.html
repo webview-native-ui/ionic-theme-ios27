@@ -65,6 +65,23 @@
             ></ion-buttons
           >
         </ion-toolbar>
+        <h3>Web rail clones (outside toolbar)</h3>
+        <div class="badge-clone-row">
+          @for (value of badges; track value) {
+            <ion-button class="ios-theme-vertical-bars-toolbar-projection ion-cloned-element" aria-label="Projected notifications"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon
+              ><ion-badge data-native-ui-badge-overlay>{{ value }}</ion-badge></ion-button
+            >
+          }
+          <ion-buttons class="ios-theme-vertical-bars-toolbar-projection ion-cloned-element">
+            @for (value of badges; track value) {
+              <ion-button class="ios-theme-vertical-bars-toolbar-action ion-cloned-element" aria-label="Projected notifications"
+                ><ion-icon slot="icon-only" [icon]="more"></ion-icon
+                ><ion-badge data-native-ui-badge-overlay>{{ value }}</ion-badge></ion-button
+              >
+            }
+          </ion-buttons>
+        </div>
         <h3>Outside toolbar / nested badge</h3>
         <ion-button aria-label="Notifications"><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge>3</ion-badge></ion-button>
         <ion-toolbar

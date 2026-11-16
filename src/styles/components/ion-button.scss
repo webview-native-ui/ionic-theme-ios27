@@ -493,62 +493,70 @@ ion-toolbar.ios:not(.ios-theme-disabled, .ios26-disabled) {
   }
 }
 
-// Badge layout belongs only to toolbar buttons with a direct badge child.
-ion-toolbar.ios:not(.ios-theme-disabled, .ios26-disabled) {
-  ion-button.ios:has(> ion-badge:not(.ios-theme-disabled, .ios26-disabled)):not(.ios-theme-disabled, .ios26-disabled):not(
-      :where(ion-buttons:is(.ios-theme-disabled, .ios26-disabled) *)
-    ) {
-    // Keep the action's layout and hit area; only the badge paints outside it.
+// Only toolbar buttons and their owned Web rail clones share badge layout.
+:is(
+    ion-toolbar.ios:not(.ios-theme-disabled, .ios26-disabled) ion-button.ios,
+    ion-button.ios:where(.ios-theme-vertical-bars-toolbar-projection.ion-cloned-element):has(> ion-badge[data-native-ui-badge-overlay]),
+    :where(ion-buttons.ios.ios-theme-vertical-bars-toolbar-projection.ion-cloned-element)
+      > ion-button.ios:has(> ion-badge[data-native-ui-badge-overlay])
+  ):has(> ion-badge:not(.ios-theme-disabled, .ios26-disabled)):not(.ios-theme-disabled, .ios26-disabled):not(
+    :where(ion-buttons:is(.ios-theme-disabled, .ios26-disabled) *)
+  ) {
+  // Keep the action's layout and hit area; only the badge paints outside it.
+  overflow: visible;
+
+  &::part(native) {
     overflow: visible;
-
-    &::part(native) {
-      overflow: visible;
-      contain: none;
-    }
-
-    > ion-badge:not(.ios-theme-disabled, .ios26-disabled) {
-      position: absolute;
-      box-sizing: border-box;
-      margin: 0;
-      pointer-events: none;
-      z-index: 1;
-      --padding-top: 0px;
-      --padding-bottom: 0px;
-      --padding-start: 3.5px;
-      --padding-end: 3.5px;
-      min-width: 18px;
-      height: 18px;
-      border-radius: 9px;
-      font-size: 13px;
-      font-weight: 400;
-      line-height: 18px;
-      letter-spacing: 0;
-      text-transform: none;
-      unicode-bidi: plaintext;
-      // System toolbar badges keep their trailing edge as the label grows.
-      inset-block-start: calc(50% - 25px);
-      inset-inline-end: calc(50% - 22px);
-
-      &[hidden] {
-        display: none;
-      }
-
-      // Override Ionic's empty-badge default without outranking application classes.
-      :where(&:empty) {
-        display: inline-block;
-      }
-
-      &:empty {
-        width: 18px;
-      }
-    }
+    contain: none;
   }
 
-  // A shared glass group must not clip the badge above its rounded surface.
-  ion-buttons.ios:has(> ion-button:not(.ios-theme-disabled, .ios26-disabled) > ion-badge:not(.ios-theme-disabled, .ios26-disabled)):not(
-      .ios-theme-disabled,
-      .ios26-disabled
-    ) {
-    overflow: visible;
+  > ion-badge:not(.ios-theme-disabled, .ios26-disabled) {
+    position: absolute;
+    box-sizing: border-box;
+    margin: 0;
+    pointer-events: none;
+    z-index: 1;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+    --padding-start: 3.5px;
+    --padding-end: 3.5px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0;
+    text-transform: none;
+    unicode-bidi: plaintext;
+    // System toolbar badges keep their trailing edge as the label grows.
+    inset-block-start: calc(50% - 25px);
+    inset-inline-end: calc(50% - 22px);
+
+    &[hidden] {
+      display: none;
+    }
+
+    // Override Ionic's empty-badge default without outranking application classes.
+    :where(&:empty) {
+      display: inline-block;
+    }
+
+    &:empty {
+      width: 18px;
+    }
   }
+}
+
+// Only overlaid source badges release clipping in a projected group.
+:is(
+    ion-toolbar.ios:not(.ios-theme-disabled, .ios26-disabled) ion-buttons.ios,
+    ion-buttons.ios:where(.ios-theme-vertical-bars-toolbar-projection.ion-cloned-element):has(
+        > ion-button > ion-badge[data-native-ui-badge-overlay]
+      )
+  ):has(> ion-button:not(.ios-theme-disabled, .ios26-disabled) > ion-badge:not(.ios-theme-disabled, .ios26-disabled)):not(
+    .ios-theme-disabled,
+    .ios26-disabled
+  ) {
+  overflow: visible;
 }
