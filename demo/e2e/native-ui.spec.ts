@@ -1841,9 +1841,10 @@ test('all demo pages keep projection consistent through consecutive navigation',
     await expect
       .poll(() =>
         page.evaluate(() => {
-          const status = (document.querySelector('ion-app') as TestAppElement).nativeUI!.getStatus();
+          const status = (document.querySelector('ion-app') as TestAppElement).nativeUI?.getStatus();
           const snapshot = Capacitor.registerPlugin<NativeUIMock>('NativeUI').updates.at(-1)!;
           return (
+            !!status &&
             status.state !== 'stopped' &&
             document.documentElement.dataset.testEnteredPath === location.pathname &&
             Array.from(document.querySelectorAll('ion-router-outlet')).every(

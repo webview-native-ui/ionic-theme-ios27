@@ -78,6 +78,7 @@ export class IndexPageComponent {
     { name: 'toast', enable: true },
     { name: 'toggle', enable: true },
     { name: 'toolbar', enable: true },
+    { name: 'toolbar-badge', enable: true },
   ]);
   readonly enableComponents = computed(() => this.components().filter((c) => c.enable));
   readonly disableComponents = computed(() => this.components().filter((c) => !c.enable));
