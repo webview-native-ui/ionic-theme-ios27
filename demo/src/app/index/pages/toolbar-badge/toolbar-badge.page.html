@@ -18,7 +18,7 @@
         </ion-toolbar>
         <h3>Grouped buttons</h3>
         <ion-toolbar>
-          <ion-buttons slot="end">
+          <ion-buttons slot="end" data-badge-group>
             @for (value of badges; track value) {
               <ion-button aria-label="Notifications"
                 ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge>{{ value }}</ion-badge></ion-button
@@ -41,15 +41,21 @@
             ></ion-buttons
           >
         </ion-toolbar>
-        <h3>Custom color / hidden / opt-out</h3>
+        <h3>Custom color / hidden / CSS class / opt-out</h3>
         <ion-toolbar>
           <ion-buttons slot="start"
             ><ion-button aria-label="Notifications"
               ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge color="success">3</ion-badge></ion-button
             ><ion-button aria-label="Notifications"
               ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge hidden>3</ion-badge></ion-button
-            ></ion-buttons
-          >
+            >
+            <ion-button aria-label="Notifications hidden by CSS"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge class="badge-off">3</ion-badge></ion-button
+            >
+            <ion-button aria-label="Unread indicator hidden by CSS"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge class="badge-off"></ion-badge
+            ></ion-button>
+          </ion-buttons>
           <ion-buttons slot="end" class="ios-theme-disabled"
             ><ion-button aria-label="Notifications"
               ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge>3</ion-badge></ion-button

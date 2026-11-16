@@ -22,6 +22,8 @@ Use `.button-submit` when the button needs the same treatment but cannot use `ty
 Place `ion-badge` directly inside an `ion-button` in an `ion-toolbar`. Both
 standalone buttons and buttons inside `ion-buttons` support this markup.
 An empty badge shows an unread indicator; text such as `3` or `99+` shows a count.
+For an indicator, keep the contents completely empty (`<ion-badge></ion-badge>`),
+without spaces or line breaks between the tags.
 
 Standalone toolbar button:
 
