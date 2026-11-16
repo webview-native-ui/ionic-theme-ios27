@@ -44,7 +44,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
         working-directory: './demo'
       - name: Run Playwright tests
-        run: npm run test:e2e -- --shard=${{ matrix.shard }}/2 --reporter=blob
+        run: npm run test:e2e -- --shard=${{ matrix.shard }}/2 --reporter=blob,line
         working-directory: ./demo
         env:
           IONIC_MAJOR: 9
