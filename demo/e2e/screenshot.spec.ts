@@ -22,6 +22,7 @@ const routes = [
   ...typesPath({ path: '/main/index/action-sheet', name: 'action-sheet' }, actionSheetTypes),
   ...typesPath({ path: '/main/index/alert', name: 'alert' }, alertTypes),
   { path: '/main/index/button', name: 'button' },
+  { path: '/main/index/toolbar-badge', name: 'toolbar-badge' },
   { path: '/main/index/checkbox', name: 'checkbox' },
   { path: '/main/index/range', name: 'range' },
   ...typesPath({ path: '/main/index/toast', name: 'toast' }, toastTypes),
@@ -61,6 +62,16 @@ const prepareScreenShot = async (page: Page, routeName: string) => {
     )
     .toBe(true);
 
+  if (routeName === 'toolbar-badge') {
+    // Keep both directions and the unaffected-control examples in one image.
+    await page.setViewportSize({ width: 1200, height: 1000 });
+    // LTR holds an actual glass-group press; RTL retains the resting group.
+    const pressed = page.locator('app-toolbar-badge [data-badge-group] ion-button').first();
+    await pressed.hover();
+    await page.mouse.down();
+    await pressed.evaluate((button) => button.classList.add('ion-activated'));
+    return;
+  }
   if (!routeName.includes(':')) {
     const scrollHeight = await page.locator('ion-content[role="main"]').evaluate(async (el: any) => {
       const scrollEl = await el.getScrollElement();

@@ -15,6 +15,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/alert/alert.page').then((m) => m.AlertPage),
   },
   {
+    path: 'toolbar-badge',
+    loadComponent: () => import('./pages/toolbar-badge/toolbar-badge.page').then((m) => m.ToolbarBadgePage),
+  },
+  {
     path: 'button',
     loadComponent: () => import('./pages/button/button.page').then((m) => m.ButtonPage),
   },

@@ -1,0 +1,95 @@
+<ion-header>
+  <ion-toolbar
+    ><ion-buttons slot="start"><ion-back-button defaultHref="/main/index"></ion-back-button></ion-buttons
+    ><ion-title>Toolbar badges</ion-title></ion-toolbar
+  >
+</ion-header>
+<ion-content>
+  <div class="badge-examples">
+    @for (direction of directions; track direction) {
+      <section [attr.dir]="direction">
+        <h2>{{ direction.toUpperCase() }}</h2>
+        <p>Empty / 3 / 99+ / no badge</p>
+        <h3>Standalone buttons</h3>
+        <ion-toolbar>
+          @for (value of badges; track value) {
+            <ion-button slot="end" aria-label="Notifications"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge>{{ value }}</ion-badge></ion-button
+            >
+          }
+          <ion-button slot="end" aria-label="More"><ion-icon slot="icon-only" [icon]="more"></ion-icon></ion-button>
+        </ion-toolbar>
+        <h3>Grouped buttons</h3>
+        <ion-toolbar>
+          <ion-buttons slot="end" data-badge-group>
+            @for (value of badges; track value) {
+              <ion-button aria-label="Notifications"
+                ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge>{{ value }}</ion-badge></ion-button
+              >
+            }
+            <ion-button aria-label="More"><ion-icon slot="icon-only" [icon]="more"></ion-icon></ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+        <h3>Single group / menu group</h3>
+        <ion-toolbar>
+          <ion-buttons slot="start"
+            ><ion-button aria-label="Notifications"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge>3</ion-badge></ion-button
+            ></ion-buttons
+          >
+          <ion-buttons slot="end"
+            ><ion-menu-button [autoHide]="false"></ion-menu-button
+            ><ion-button aria-label="Notifications"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge>3</ion-badge></ion-button
+            ></ion-buttons
+          >
+        </ion-toolbar>
+        <h3>Custom color / hidden / CSS class / opt-out</h3>
+        <ion-toolbar>
+          <ion-buttons slot="start"
+            ><ion-button aria-label="Notifications"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge color="success">3</ion-badge></ion-button
+            ><ion-button aria-label="Notifications"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge hidden>3</ion-badge></ion-button
+            >
+            <ion-button aria-label="Notifications hidden by CSS"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge class="badge-off">3</ion-badge></ion-button
+            >
+            <ion-button aria-label="Unread indicator hidden by CSS"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge class="badge-off"></ion-badge
+            ></ion-button>
+          </ion-buttons>
+          <ion-buttons slot="end" class="ios-theme-disabled"
+            ><ion-button aria-label="Notifications"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge>3</ion-badge></ion-button
+            ></ion-buttons
+          >
+        </ion-toolbar>
+        <h3>Web rail clones (outside toolbar)</h3>
+        <div class="badge-clone-row">
+          @for (value of badges; track value) {
+            <ion-button class="ios-theme-vertical-bars-toolbar-projection ion-cloned-element" aria-label="Projected notifications"
+              ><ion-icon slot="icon-only" [icon]="more"></ion-icon
+              ><ion-badge data-native-ui-badge-overlay>{{ value }}</ion-badge></ion-button
+            >
+          }
+          <ion-buttons class="ios-theme-vertical-bars-toolbar-projection ion-cloned-element">
+            @for (value of badges; track value) {
+              <ion-button class="ios-theme-vertical-bars-toolbar-action ion-cloned-element" aria-label="Projected notifications"
+                ><ion-icon slot="icon-only" [icon]="more"></ion-icon
+                ><ion-badge data-native-ui-badge-overlay>{{ value }}</ion-badge></ion-button
+              >
+            }
+          </ion-buttons>
+        </div>
+        <h3>Outside toolbar / nested badge</h3>
+        <ion-button aria-label="Notifications"><ion-icon slot="icon-only" [icon]="more"></ion-icon><ion-badge>3</ion-badge></ion-button>
+        <ion-toolbar
+          ><ion-button
+            ><span>Nested <ion-badge>3</ion-badge></span></ion-button
+          ></ion-toolbar
+        >
+      </section>
+    }
+  </div>
+</ion-content>
