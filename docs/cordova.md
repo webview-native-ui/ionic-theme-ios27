@@ -26,10 +26,12 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   resolve: {
-    alias: [{
-      find: /^@rdlabo\/capacitor-native-ui\/integration$/,
-      replacement: '@webview-native-ui/cordova-plugin/integration',
-    }],
+    alias: [
+      {
+        find: /^@rdlabo\/capacitor-native-ui\/integration$/,
+        replacement: '@webview-native-ui/cordova-plugin/integration',
+      },
+    ],
   },
 });
 ```
