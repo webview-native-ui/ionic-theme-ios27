@@ -1,6 +1,6 @@
 # Set up the iOS 26 theme
 
-Use an existing Ionic Angular, React, or Vue application with `@ionic/core >=8.8.1 <10`.
+Apply the iOS 26 theme to an Ionic Angular, React, or Vue app. This setup supports `@ionic/core >=8.8.1 <10`.
 
 ## 1. Install
 

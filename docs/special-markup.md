@@ -6,19 +6,21 @@ title: Special markup and classes
 
 Most Ionic markup works without changes. The combinations below are explicit opt-ins provided by the theme.
 
-## Primary submit buttons
+<a id="primary-submit-buttons"></a>
 
-Solid primary submit buttons use `--ion-color-primary-brightness` for their foreground and border treatment. Define a value with sufficient contrast for your primary color.
+## Submit buttons
+
+Set the brightness variable for the Ionic color used by a solid submit button. For example, a danger-colored button reads `--ion-color-danger-brightness` for its foreground and edge.
 
 ```css
 :root {
-  --ion-color-primary-brightness: #96feff;
+  --ion-color-danger-brightness: #fff;
 }
 ```
 
 ```html preview
-<ion-button type="submit" color="primary">Submit</ion-button>
-<ion-button class="button-submit" fill="solid" color="primary">Continue</ion-button>
+<ion-button type="submit" color="danger">Submit</ion-button>
+<ion-button class="button-submit" fill="solid" color="danger">Continue</ion-button>
 ```
 
 Use `.button-submit` when the button needs the same treatment but cannot use `type="submit"`.
@@ -219,7 +221,9 @@ Add `.toolbar-searchbar` when an `ion-toolbar` combines a search bar with start 
 </ion-toolbar>
 ```
 
-## Opting out
+<a id="opting-out"></a>
+
+## Disable the theme for a component
 
 Add `.ios-theme-disabled` to an individual Ionic component when it must retain Ionic's standard iOS styling.
 
