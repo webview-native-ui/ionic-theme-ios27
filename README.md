@@ -4,6 +4,8 @@ Apply iOS 26 styling and Liquid Glass interactions to Ionic components.
 
 [Set up the theme](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/setup) · [Try the browser demo](https://ionic-theme-ios26.rdlabo.dev/)
 
+The setup guide shows Ionic 9. On Ionic 8 (8.8.1 or later), Angular apps import `provideIonicAngular` from `@ionic/angular/standalone`.
+
 <!-- rdlabo-docs-pick -->
 
 ![iOS 26 themed Ionic screens with Liquid Glass tab bar, lists, and controls](https://raw.githubusercontent.com/rdlabo-dev/ionic-theme-ios26/v3.0.0/screenshots/ios26.png)
@@ -129,4 +131,5 @@ Only `npm run release` can create a release tag. Stable `ios26-vX.Y.Z` tags (maj
 ## Maintainers
 
 - [rdlabo](https://rdlabo.dev/)
+
 <!-- /rdlabo-docs-omit -->
