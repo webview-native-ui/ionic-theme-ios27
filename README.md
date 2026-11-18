@@ -4,6 +4,8 @@ Apply iOS 27 Liquid Glass styling and animations to Ionic components. For native
 
 **[Ionic 9 demo](https://ionic-theme-ios27.rdlabo.dev/) · [Setup guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/setup)**
 
+The setup guide shows Ionic 9. On Ionic 8 (8.8.1 or later), Angular apps import `provideIonicAngular` from `@ionic/angular/standalone`.
+
 <!-- rdlabo-docs-pick -->
 
 <p>
@@ -16,19 +18,19 @@ Apply iOS 27 Liquid Glass styling and animations to Ionic components. For native
 
 ## What would you like to do?
 
-| Goal                                                    | Guide                                                                                                       |
-| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Style an existing Ionic app                             | [Get started](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/setup)                                |
-| Select iOS 26/27 styles and optionally use MD3          | [Adaptive themes](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/adaptive-themes)                  |
-| Add native iOS controls to a Capacitor app              | [Add Native UI](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/add-native-ui)                      |
-| Add a side rail to Ionic while keeping your own theme   | [Vertical Bars step by step](https://webview-native-ui.com/projects/capacitor-native-ui/docs/ionic-vertical-bars) |
-| Optional: use the theme and Native UI with Cordova      | [Cordova setup](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/cordova)                                                                            |
-| Configure styles, dark mode and animations individually | [Configuration](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/configuration)                                                                      |
-| Upgrade an existing installation                        | [Migration](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/migration)                              |
+| Goal                                                    | Guide                                                                                                                                                                                                                      |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Style an existing Ionic app                             | [Get started](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/setup)                                                                                                                                         |
+| Select iOS 26/27 styles and optionally use MD3          | [Adaptive themes](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/adaptive-themes)                                                                                                                           |
+| Add native iOS controls to a Capacitor app              | [Add Native UI](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/add-native-ui)                                                                                                                               |
+| Add a side rail to Ionic while keeping your own theme   | [Vertical Bars step by step](https://webview-native-ui.com/projects/capacitor-native-ui/docs/ionic-vertical-bars)                                                                                                          |
+| Optional: use the theme and Native UI with Cordova      | [Configure Ionic](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/setup#3.-pass-theme-configuration-to-ionic), then [connect Cordova](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/cordova) |
+| Configure styles, dark mode and animations individually | [Configuration](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/configuration)                                                                                                                               |
+| Upgrade an existing installation                        | [Migration](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/migration)                                                                                                                                       |
 
 ## Get started
 
-For device-driven layout, follow the [device layout guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/vertical-bars-layout). For Cordova, follow the [Cordova setup guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/cordova).
+For device-driven layout, follow the [device layout guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/vertical-bars-layout). For Cordova, first pass `ios27ThemeConfig` to your Ionic initializer, then follow the [Cordova setup guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/cordova).
 
 Install the theme, add one global theme stylesheet after Ionic's base CSS, and pass the theme configuration to your existing Ionic initializer. See the [setup guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/setup) for Angular, React and Vue.
 
