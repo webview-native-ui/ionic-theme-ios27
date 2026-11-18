@@ -2,7 +2,7 @@
 
 Apply iOS 26 styling and Liquid Glass interactions to Ionic components.
 
-[Set up the theme](docs/setup.md) · [Try the browser demo](https://ionic-theme-ios26.rdlabo.dev/)
+[Set up the theme](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/setup) · [Try the browser demo](https://ionic-theme-ios26.rdlabo.dev/)
 
 <!-- rdlabo-docs-pick -->
 
@@ -34,24 +34,24 @@ const ionicConfig = {
 };
 ```
 
-Follow [Set up the theme](docs/setup.md) for Angular, React, and Vue examples,
-dark-mode selection, and a preview. Use [Configuration](docs/configuration.md)
+Follow [Set up the theme](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/setup) for Angular, React, and Vue examples,
+dark-mode selection, and a preview. Use [Configuration](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/configuration)
 for individual CSS and animation exports, custom options, and iOS 26 with MD3.
-Existing applications can adopt the wrappers using [Migration](docs/migration.md).
+Existing applications can adopt the wrappers using [Migration](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/migration).
 
 ## Documentation
 
-- [Using ion-item-group](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/using-ion-item-group) — required markup for inset lists.
-- [Special markup and classes](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/special-markup) — opt-in markup and utility classes used by the theme.
-- [ESLint](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/eslint) — check list structure with ESLint rules.
-- [Features](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/features) — CSS variables, Liquid Glass, selective imports, and dark mode.
-- [Experimental Animation](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/experimental-animation) — tab bar and searchable effects.
-- [iOS 18](https://docs.rdlabo.dev/projects/ionic-theme-ios26/docs/ios-18) — load the theme only on iOS 26.
-- [Migration](docs/migration.md) — optional wrapper adoption and version-specific upgrade steps.
+- [Using ion-item-group](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/using-ion-item-group) — required markup for inset lists.
+- [Special markup and classes](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/special-markup) — opt-in markup and utility classes used by the theme.
+- [ESLint](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/eslint) — check list structure with ESLint rules.
+- [Features](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/features) — CSS variables, Liquid Glass, selective imports, and dark mode.
+- [Experimental Animation](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/experimental-animation) — tab bar and searchable effects.
+- [iOS 18](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/ios-18) — load the theme only on iOS 26.
+- [Migration](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/migration) — optional wrapper adoption and version-specific upgrade steps.
 
 <!-- rdlabo-docs-omit -->
 
-**Full documentation:** [https://docs.rdlabo.dev/projects/ionic-theme-ios26](https://docs.rdlabo.dev/projects/ionic-theme-ios26)
+**Full documentation:** [https://webview-native-ui.com/projects/ionic-theme-ios26](https://webview-native-ui.com/projects/ionic-theme-ios26)
 
 ## Development & Testing
 
