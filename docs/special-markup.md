@@ -6,7 +6,9 @@ title: Special markup and classes
 
 Most Ionic markup works without changes. The combinations below are explicit opt-ins provided by the theme.
 
-## Primary submit buttons
+<a id="primary-submit-buttons"></a>
+
+## Submit buttons
 
 Solid submit buttons use the Ionic color's contrast value for their foreground. Their directional edge treatment follows the iOS 27 prominent-button appearance and does not require an additional brightness color.
 

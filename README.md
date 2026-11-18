@@ -1,7 +1,6 @@
 # Ionic Theme iOS27
 
-Install with `npm install @rdlabo/ionic-theme-ios27 @erkamyaman/capacitor-foldable`. For 1.x, use the [v1.2.1 guide](https://github.com/webview-native-ui/ionic-theme-ios27/tree/ios27-v1.2.1).
-A theme for Ionic apps that brings iOS 27 Liquid Glass and motion to the Web. Capacitor iOS apps can also opt into Native UI for supported controls, officially supported starting with 2.0.0.
+Apply iOS 27 Liquid Glass styling and animations to Ionic components. For native iOS controls, add Capacitor Native UI.
 
 **[Ionic 9 demo](https://ionic-theme-ios27.rdlabo.dev/) · [Setup guide](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/setup)**
 
@@ -29,14 +28,12 @@ A theme for Ionic apps that brings iOS 27 Liquid Glass and motion to the Web. Ca
 
 ## Get started
 
-The standard guides use the standalone theme package, with Capacitor as the default native host. Theme-only browser use remains supported. For a Cordova application, use the optional [Cordova guide](docs/cordova.md), which covers its bundled theme and host-specific startup.
-
-We use [Capacitor Foldable](https://github.com/erkamyaman/capacitor-foldable), an excellent community plugin by Erkam Yaman, as our standard device-layout integration. It exposes fold state, hinge geometry, bar placement and change events to your application, giving you control over how the layout responds. Foldable handles device reporting; the theme provides Web layout helpers and Native UI projects controls. Install it alongside the package you use, then connect its events in your app.
+For device-driven layout, follow the [device layout guide](docs/vertical-bars-layout.md). For Cordova, follow the [Cordova setup guide](docs/cordova.md).
 
 Install the theme, add one global theme stylesheet after Ionic's base CSS, and pass the theme configuration to your existing Ionic initializer. See the [setup guide](https://docs.rdlabo.dev/projects/ionic-theme-ios27/docs/setup) for Angular, React and Vue.
 
 ```sh
-npm install @rdlabo/ionic-theme-ios27 @erkamyaman/capacitor-foldable
+npm install @rdlabo/ionic-theme-ios27
 ```
 
 ```css
@@ -71,7 +68,7 @@ Use [configuration](docs/configuration.md) for individual CSS and animation sett
 
 The Capacitor plugin is maintained in [webview-native-ui/capacitor-plugin](https://github.com/webview-native-ui/capacitor-plugin). This repository owns the Ionic theme, the combined demo, browser screenshots, and simulator integration tests. The demo installs `@rdlabo/capacitor-native-ui` from npm; theme releases do not publish or change the plugin version.
 
-The [Cordova plugin](https://github.com/webview-native-ui/cordova-plugin) is maintained separately. It distributes a pinned copy of this theme with its integration imports connected to Cordova. Shared theme fixes belong here; Cordova updates its pinned theme version in a subsequent plugin release. The Capacitor demo and candidate checks below do not validate Cordova.
+The [Cordova plugin](https://github.com/webview-native-ui/cordova-plugin) provides the native integration. Install this theme separately in the Web project.
 
 To verify an unpublished plugin archive against the real demo, run:
 
@@ -80,6 +77,8 @@ npm run test:native-candidate -- /absolute/path/rdlabo-capacitor-native-ui-VERSI
 ```
 
 This creates an isolated temporary checkout and leaves your manifests and lockfiles unchanged. Add `--shard=1/2` alongside `--e2e` to run one Playwright shard; run every shard to cover the full suite. Each shard retains package checks, unit tests, and the production build. Add `--simulator=UDID` for native UI, search, and edge simulator suites. Diagnostics and the temporary demo are retained at the printed path. Plugin-only unit and native library tests live in the plugin repository. Its CI tests each candidate archive against this repository’s main branch.
+
+For 1.x installations, see the [v1.2.1 guide](https://github.com/webview-native-ui/ionic-theme-ios27/tree/ios27-v1.2.1).
 
 ## Maintenance
 
