@@ -1,6 +1,6 @@
 # Ionic Theme iOS27
 
-Apply iOS 27 Liquid Glass styling and animations to Ionic components. For native iOS controls, add Capacitor Native UI.
+Apply iOS 27 Liquid Glass styling and animations to Ionic components in the browser or a WebView. For native iOS controls, add Capacitor Native UI.
 
 **[Ionic 9 demo](https://ionic-theme-ios27.rdlabo.dev/) · [Setup guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/setup)**
 
@@ -16,6 +16,8 @@ The setup guide shows Ionic 9. On Ionic 8 (8.8.1 or later), Angular apps import 
 
 <!-- /rdlabo-docs-pick -->
 
+<a id="get-started"></a>
+
 ## What would you like to do?
 
 | Goal                                                    | Guide                                                                                                                                                                                                                      |
@@ -28,36 +30,7 @@ The setup guide shows Ionic 9. On Ionic 8 (8.8.1 or later), Angular apps import 
 | Configure styles, dark mode and animations individually | [Configuration](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/configuration)                                                                                                                               |
 | Upgrade an existing installation                        | [Migration](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/migration)                                                                                                                                       |
 
-## Get started
-
-For device-driven layout, follow the [device layout guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/vertical-bars-layout). For Cordova, first pass `ios27ThemeConfig` to your Ionic initializer, then follow the [Cordova setup guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/cordova).
-
-Install the theme, add one global theme stylesheet after Ionic's base CSS, and pass the theme configuration to your existing Ionic initializer. See the [setup guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/setup) for Angular, React and Vue.
-
-```sh
-npm install @rdlabo/ionic-theme-ios27
-```
-
-```css
-@import '@rdlabo/ionic-theme-ios27/styles/system.css';
-```
-
-```ts
-import { ios27ThemeConfig } from '@rdlabo/ionic-theme-ios27';
-
-provideIonicAngular({
-  ...ios27ThemeConfig,
-  // animated: false,
-});
-```
-
-Choose `styles/class.css` for application-controlled dark mode or `styles/always.css` for always-dark mode. The stylesheet includes the matching Ionic dark palette. The theme configuration defaults to iOS mode and its animations, with application options taking precedence. Ionic compatibility is `>=8.8.1 <10`. Browser-only apps do not need a native Capacitor project.
-
-The theme styles toolbars, tabs, lists, buttons, search, and overlays, with light and dark appearances. It does not activate native controls. Once the Web theme is working, you can optionally [add Native UI](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/add-native-ui).
-
 ## Customize your app
-
-Use [configuration](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/configuration) for individual CSS and animation settings. Existing applications can optionally simplify their setup using the [migration guide](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/migration#optional-simplify-the-setup).
 
 - [Features](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/features): CSS variables, Liquid Glass, and selective component imports.
 - [Special markup and classes](https://webview-native-ui.com/projects/ionic-theme-ios27/docs/special-markup): opt-in component behavior.
