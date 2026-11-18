@@ -18,31 +18,11 @@ The setup guide shows Ionic 9. On Ionic 8 (8.8.1 or later), Angular apps import 
 npm install @rdlabo/ionic-theme-ios26
 ```
 
-After Ionic's base CSS, add the system-dark stylesheet to your global stylesheet.
-
-```css
-@import '@rdlabo/ionic-theme-ios26/styles/system.css';
-```
-
-Spread `ios26ThemeConfig` into your existing Ionic initializer's options. The
-configuration supplies iOS mode and theme animations.
-
-```ts
-import { ios26ThemeConfig } from '@rdlabo/ionic-theme-ios26';
-
-const ionicConfig = {
-  ...ios26ThemeConfig,
-  // animated: false,
-};
-```
-
-Follow [Set up the theme](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/setup) for Angular, React, and Vue examples,
-dark-mode selection, and a preview. Use [Configuration](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/configuration)
-for individual CSS and animation exports, custom options, and iOS 26 with MD3.
-Existing applications can adopt the wrappers using [Migration](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/migration).
+Follow the [setup guide](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/setup) to load the stylesheet and enable theme animations in your framework.
 
 ## Documentation
 
+- [Configuration](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/configuration) — individual stylesheets and animation options.
 - [Using ion-item-group](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/using-ion-item-group) — required markup for inset lists.
 - [Special markup and classes](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/special-markup) — opt-in markup and utility classes used by the theme.
 - [ESLint](https://webview-native-ui.com/projects/ionic-theme-ios26/docs/eslint) — check list structure with ESLint rules.
