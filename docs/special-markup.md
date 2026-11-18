@@ -249,7 +249,9 @@ The example uses Ionic's standard collapsible large-title structure. Scroll the 
 
 The `.ion-page` wrapper makes this embedded preview behave like a complete routed page. An application using `ion-router-outlet` normally receives that page container automatically. The inset list and its items only provide enough content to demonstrate scrolling; they are not required by `.searchbar-classic`.
 
-## Opting out
+<a id="opting-out"></a>
+
+## Disable the theme for a component
 
 Add `.ios-theme-disabled` to an individual Ionic component when it must retain Ionic's standard iOS styling.
 

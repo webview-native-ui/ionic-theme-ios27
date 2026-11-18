@@ -130,7 +130,7 @@ The same appearance applies to existing `.button-submit` actions with solid fill
 
 Native controls keep ownership during navigation, modal animations and image handoffs. An image shown in the WebView is still the native projection's presentation, not a return to the original Web button. Retest and remove transition-specific workarounds that force those controls back to Web. Keep intentional opt-outs and handling for unsupported controls or native failures; no additional animation flags or second runtime are needed.
 
-Check both rail edges, rail disappearance, fold/rotation, card/sheet/full-screen presentation, and solid submit actions. Also check ordinary iPhone and browser fallback.
+Check both rail edges, rail disappearance, fold/rotation, card/sheet/full-screen presentation, and solid submit buttons. Also check ordinary iPhone and browser fallback.
 
 ## Native UI package separation
 
