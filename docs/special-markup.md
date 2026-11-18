@@ -221,7 +221,9 @@ Add `.toolbar-searchbar` when an `ion-toolbar` combines a search bar with start 
 </ion-toolbar>
 ```
 
-## Opting out
+<a id="opting-out"></a>
+
+## Disable the theme for a component
 
 Add `.ios-theme-disabled` to an individual Ionic component when it must retain Ionic's standard iOS styling.
 
