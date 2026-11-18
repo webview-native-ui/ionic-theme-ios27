@@ -1,14 +1,14 @@
 # Ionic Theme iOS26
 
-A CSS/JS theme library that applies iOS26 design system to Ionic applications.
+Apply iOS 26 styling and Liquid Glass interactions to Ionic components.
+
+[Set up the theme](docs/setup.md) · [Try the browser demo](https://ionic-theme-ios26.rdlabo.dev/)
 
 <!-- rdlabo-docs-pick -->
 
 ![iOS 26 themed Ionic screens with Liquid Glass tab bar, lists, and controls](https://raw.githubusercontent.com/rdlabo-dev/ionic-theme-ios26/v3.0.0/screenshots/ios26.png)
 
 <!-- /rdlabo-docs-pick -->
-
-DEMO is here: https://ionic-theme-ios26.rdlabo.dev/
 
 ## Installation
 
